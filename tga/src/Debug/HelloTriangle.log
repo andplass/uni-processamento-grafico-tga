@@ -1,0 +1,16 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (HelloTriangle.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  SceneManager.cpp
+c:\users\cesar\desktop\trabalho2.0-pg\trabalho\hellotriangle\scenemanager.cpp(112): warning C4244: '=': conversão de 'double' para 'float', possível perda de dados
+c:\users\cesar\desktop\trabalho2.0-pg\trabalho\hellotriangle\scenemanager.cpp(113): warning C4244: '=': conversão de 'double' para 'float', possível perda de dados
+c:\users\cesar\desktop\trabalho2.0-pg\trabalho\hellotriangle\scenemanager.cpp(114): warning C4244: '=': conversão de 'double' para 'float', possível perda de dados
+c:\users\cesar\desktop\trabalho2.0-pg\trabalho\hellotriangle\scenemanager.cpp(122): warning C4244: '=': conversão de 'double' para 'float', possível perda de dados
+c:\users\cesar\desktop\trabalho2.0-pg\trabalho\hellotriangle\scenemanager.cpp(123): warning C4244: '=': conversão de 'double' para 'float', possível perda de dados
+c:\users\cesar\desktop\trabalho2.0-pg\trabalho\hellotriangle\scenemanager.cpp(124): warning C4244: '=': conversão de 'double' para 'float', possível perda de dados
+c:\users\cesar\desktop\trabalho2.0-pg\trabalho\hellotriangle\scenemanager.cpp(132): warning C4244: '=': conversão de 'double' para 'float', possível perda de dados
+c:\users\cesar\desktop\trabalho2.0-pg\trabalho\hellotriangle\scenemanager.cpp(139): warning C4244: '=': conversão de 'double' para 'float', possível perda de dados
+c:\users\cesar\desktop\trabalho2.0-pg\trabalho\hellotriangle\scenemanager.cpp(227): warning C4244: '=': conversão de 'double' para 'float', possível perda de dados
+c:\users\cesar\desktop\trabalho2.0-pg\trabalho\hellotriangle\scenemanager.cpp(245): warning C4244: '=': conversão de 'double' para 'float', possível perda de dados
+c:\users\cesar\desktop\trabalho2.0-pg\trabalho\hellotriangle\scenemanager.cpp(246): warning C4244: '=': conversão de 'double' para 'float', possível perda de dados
+c:\users\cesar\desktop\trabalho2.0-pg\trabalho\hellotriangle\scenemanager.cpp(286): warning C4244: '=': conversão de 'double' para 'float', possível perda de dados
+c:\users\cesar\desktop\trabalho2.0-pg\trabalho\hellotriangle\scenemanager.cpp(299): warning C4244: '=': conversão de 'double' para 'float', possível perda de dados
+  HelloTriangle.vcxproj -> C:\Users\cesar\Desktop\Trabalho2.0-pg\Trabalho\Debug\Transforms.exe
