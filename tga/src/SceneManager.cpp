@@ -1,23 +1,27 @@
 #include "SceneManager.h"
-//--Cesar Missio Nunes
 //static controllers for mouse and keyboard
 static bool keys[1024];
+//window attributes
 static bool resized;
 static GLuint width, height;
+//custom global variables
 float nuvens = -5.0;
-float horizontal = 2;
-float pulo = -7;
-int em = 0;
-int par = 2;
+//target location attributes
+float pos_horizontal_target = 2;
+float pos_vertical_target = -7;
+//game state attributes
 bool endgame = false;
 bool startgame = false;
+//projectile location attributes
 float tiroA = -20;
 float tiroB = 18;
 float tiroC = 18;
 float tiroD = -20;
+
 int cont = 0;
-float cenario = 0;
-float cenarioP = 0;
+//background location attributes
+float pos_background_a = 0;
+float pos_background_b = 0;
 int d = 0;
 
 SceneManager::SceneManager()
@@ -64,8 +68,7 @@ void SceneManager::initializeGraphics()
 	// Build and compile our shader program
 	addShader("../shaders/transformations.vs", "../shaders/transformations.frag");
 
-	//setup the scene -- LEMBRANDO QUE A DESCRIÇÃO DE UMA CENA PODE VIR DE ARQUIVO(S) DE 
-	// CONFIGURAÇÃO
+	//setup the scene -- LEMBRANDO QUE A DESCRIÇÃO DE UMA CENA PODE VIR DE ARQUIVO(S) DE CONFIGURAÇÃO
 	setupScene();
 
 	resized = true; //para entrar no setup da câmera na 1a vez
@@ -108,35 +111,34 @@ void SceneManager::do_movement()
 		glfwSetWindowShouldClose(window, GL_TRUE);
 
 	if (keys[GLFW_KEY_D]){
-		if (horizontal < 12){
-			horizontal = horizontal + 0.007;
-			cenario = cenario + 0.002;
-			cenarioP = cenarioP + 0.0009;
+		if (pos_horizontal_target < 12){
+			pos_horizontal_target = pos_horizontal_target + 0.007;
+			pos_background_a = pos_background_a + 0.002;
+			pos_background_b = pos_background_b + 0.0009;
 			d = 0;
 		}
-		
 	}
 		
 	if (keys[GLFW_KEY_A]) {
-		if (horizontal > -12) {
-			horizontal = horizontal - 0.007;
-			cenario = cenario - 0.002;
-			cenarioP = cenarioP - 0.0009;
+		if (pos_horizontal_target > -12) {
+			pos_horizontal_target = pos_horizontal_target - 0.007;
+			pos_background_a = pos_background_a - 0.002;
+			pos_background_b = pos_background_b - 0.0009;
 			d = 1;
 		}
 	}
 
 	if (keys[GLFW_KEY_W]) {
-		if (pulo < 4) {
+		if (pos_vertical_target < 4) {
 			for (int i = 0; i < 4; i++) {
-				pulo = pulo + 0.005;
+				pos_vertical_target = pos_vertical_target + 0.005;
 			}
 		}
 	}
 	if (keys[GLFW_KEY_S]) {
-		if (pulo > -7) {
+		if (pos_vertical_target > -7) {
 			for (int i = 0; i < 4; i++) {
-				pulo = pulo - 0.005;
+				pos_vertical_target = pos_vertical_target - 0.005;
 			}
 		}
 	}
@@ -156,8 +158,6 @@ void SceneManager::do_movement()
 			cont = 0;
 		}
 	}
-
-
 }
 
 void SceneManager::render()
@@ -183,35 +183,33 @@ void SceneManager::render()
 		resized = false;
 	}
 
-	// bind Texture
 	// Bind Textures using texture units
-	
-	
 	glUniform1i(glGetUniformLocation(shader->Program, "ourTexture1"), 0);
 
-	// CENARIO
-	glBindTexture(GL_TEXTURE_2D, texture);
-	model = glm::mat4();
-	model = glm::translate(model, glm::vec3(cenarioP, 0.0f, 0.0f));
-	model = glm::scale(model, glm::vec3(32.0f, 27.0f, 1.0f));
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-    glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-	//CENARIO 2
+	//BACKGROUND_A
 	glBindTexture(GL_TEXTURE_2D, textureE6);
 	modelC = glm::mat4();
-	modelC = glm::translate(modelC, glm::vec3(cenario, -3.5f, 0.0f));
+	modelC = glm::translate(modelC, glm::vec3(pos_background_a, -3.5f, 0.0f));
 	modelC = glm::scale(modelC, glm::vec3(35.0f, 10.0f, 1.0f));
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelC));
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-	//PERSONAGEM
+	//BACKGROUND_B
+	glBindTexture(GL_TEXTURE_2D, texture);
+	model = glm::mat4();
+	model = glm::translate(model, glm::vec3(pos_background_b, 0.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(32.0f, 27.0f, 1.0f));
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+	glBindVertexArray(VAO);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+	//TARGET
 	unsigned int es[2] = {textureE1,textureE2};
 	glBindTexture(GL_TEXTURE_2D, es[d]);
 	model3 = glm::mat4();
-	model3 = glm::translate(model3, glm::vec3(horizontal, pulo, 0.0f));
-	model3 = glm::scale(model3, glm::vec3(3.0f, 3.0f, 1.0f));
+	model3 = glm::translate(model3, glm::vec3(pos_horizontal_target, pos_vertical_target, 0.0f));
+	model3 = glm::scale(model3, glm::vec3(2.0f, 3.0f, 1.0f));
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model3));
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -238,10 +236,8 @@ void SceneManager::render()
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	}
 
-	//TIRO
+	//METEOROS
 	if (startgame == true) {
-
-
 		tiroB = tiroB - 0.004;
 		tiroC = tiroC - 0.006;
 		glBindTexture(GL_TEXTURE_2D, texture1);
@@ -270,7 +266,6 @@ void SceneManager::render()
 		if (tiroC < -13)
 			tiroC = 18;
 
-		
 		glBindTexture(GL_TEXTURE_2D, texture1);
 		model2 = glm::mat4();
 		model2 = glm::translate(model2, glm::vec3(-10.0f, tiroC, 0.0f));
@@ -312,97 +307,85 @@ void SceneManager::render()
 
 		//COLISAO
 
-		//meteoros
-		if (horizontal + 0.5 >= -0.5 - 2.5 - 3 && horizontal + 0.5 <= 0.5 + 2.5 - 3 && pulo + 0.5 >= -0.5 + tiroB && pulo + 0.5 <= 0.5 + tiroB) {
+		//METEOROS
+		// METEORO_B
+		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 - 3 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 - 3 && pos_vertical_target + 0.5 >= -0.5 + tiroB && pos_vertical_target + 0.5 <= 0.5 + tiroB) {
 			endgame = true;
 		}
-		if (horizontal + 0.5 >= -0.5 - 2.5 - 3 && horizontal + 0.5 <= 0.5 + 2.5 - 3 && pulo - 0.5 >= -0.5 + tiroB && pulo - 0.5 <= 0.5 + tiroB) {
+		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 - 3 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 - 3 && pos_vertical_target - 0.5 >= -0.5 + tiroB && pos_vertical_target - 0.5 <= 0.5 + tiroB) {
 			endgame = true;
 		}
-		if (horizontal - 0.5 >= -0.5 - 2.5 - 3 && horizontal - 0.5 <= 0.5 + 2.5 - 3 && pulo + 0.5 >= -0.5 + tiroB && pulo + 0.5 <= 0.5 + tiroB) {
+		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 - 3 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 - 3 && pos_vertical_target + 0.5 >= -0.5 + tiroB && pos_vertical_target + 0.5 <= 0.5 + tiroB) {
 			endgame = true;
 		}
-		if (horizontal - 0.5 >= -0.5 - 2.5 - 3 && horizontal - 0.5 <= 0.5 + 2.5 - 3 && pulo - 0.5 >= -0.5 + tiroB && pulo - 0.5 <= 0.5 + tiroB) {
+		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 - 3 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 - 3 && pos_vertical_target - 0.5 >= -0.5 + tiroB && pos_vertical_target - 0.5 <= 0.5 + tiroB) {
 			endgame = true;
 		}
-
-		if (horizontal + 0.5 >= -0.5 - 2.5 + 10 && horizontal + 0.5 <= 0.5 + 2.5 + 10 && pulo + 0.5 >= -0.5 + tiroB && pulo + 0.5 <= 0.5 + tiroB) {
+		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 + 10 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 + 10 && pos_vertical_target + 0.5 >= -0.5 + tiroB && pos_vertical_target + 0.5 <= 0.5 + tiroB) {
 			endgame = true;
 		}
-		if (horizontal + 0.5 >= -0.5 - 2.5 + 10 && horizontal + 0.5 <= 0.5 + 2.5 + 10 && pulo - 0.5 >= -0.5 + tiroB && pulo - 0.5 <= 0.5 + tiroB) {
+		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 + 10 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 + 10 && pos_vertical_target - 0.5 >= -0.5 + tiroB && pos_vertical_target - 0.5 <= 0.5 + tiroB) {
 			endgame = true;
 		}
-		if (horizontal - 0.5 >= -0.5 - 2.5 + 10 && horizontal - 0.5 <= 0.5 + 2.5 + 10 && pulo + 0.5 >= -0.5 + tiroB && pulo + 0.5 <= 0.5 + tiroB) {
+		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 + 10 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 + 10 && pos_vertical_target + 0.5 >= -0.5 + tiroB && pos_vertical_target + 0.5 <= 0.5 + tiroB) {
 			endgame = true;
 		}
-		if (horizontal - 0.5 >= -0.5 - 2.5 + 10 && horizontal - 0.5 <= 0.5 + 2.5 + 10 && pulo - 0.5 >= -0.5 + tiroB && pulo - 0.5 <= 0.5 + tiroB) {
+		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 + 10 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 + 10 && pos_vertical_target - 0.5 >= -0.5 + tiroB && pos_vertical_target - 0.5 <= 0.5 + tiroB) {
 			endgame = true;
 		}
-
-		if (horizontal + 0.5 >= -0.5 - 2.5 - 10 && horizontal + 0.5 <= 0.5 + 2.5 - 10 && pulo + 0.5 >= -0.5 + tiroC && pulo + 0.5 <= 0.5 + tiroC) {
+		//METEORO_C
+		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 - 10 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 - 10 && pos_vertical_target + 0.5 >= -0.5 + tiroC && pos_vertical_target + 0.5 <= 0.5 + tiroC) {
 			endgame = true;
 		}
-		if (horizontal + 0.5 >= -0.5 - 2.5 - 10 && horizontal + 0.5 <= 0.5 + 2.5 - 10 && pulo - 0.5 >= -0.5 + tiroC && pulo - 0.5 <= 0.5 + tiroC) {
+		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 - 10 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 - 10 && pos_vertical_target - 0.5 >= -0.5 + tiroC && pos_vertical_target - 0.5 <= 0.5 + tiroC) {
 			endgame = true;
 		}
-		if (horizontal - 0.5 >= -0.5 - 2.5 - 10 && horizontal - 0.5 <= 0.5 + 2.5 - 10 && pulo + 0.5 >= -0.5 + tiroC && pulo + 0.5 <= 0.5 + tiroC) {
+		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 - 10 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 - 10 && pos_vertical_target + 0.5 >= -0.5 + tiroC && pos_vertical_target + 0.5 <= 0.5 + tiroC) {
 			endgame = true;
 		}
-		if (horizontal - 0.5 >= -0.5 - 2.5 - 10 && horizontal - 0.5 <= 0.5 + 2.5 - 10 && pulo - 0.5 >= -0.5 + tiroC && pulo - 0.5 <= 0.5 + tiroC) {
+		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 - 10 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 - 10 && pos_vertical_target - 0.5 >= -0.5 + tiroC && pos_vertical_target - 0.5 <= 0.5 + tiroC) {
 			endgame = true;
 		}
-
-		if (horizontal + 0.5 >= -0.5 - 2.5 + 3 && horizontal + 0.5 <= 0.5 + 2.5 + 3 && pulo + 0.5 >= -0.5 + tiroC && pulo + 0.5 <= 0.5 + tiroC) {
+		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 + 3 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 + 3 && pos_vertical_target + 0.5 >= -0.5 + tiroC && pos_vertical_target + 0.5 <= 0.5 + tiroC) {
 			endgame = true;
 		}
-		if (horizontal + 0.5 >= -0.5 - 2.5 + 3 && horizontal + 0.5 <= 0.5 + 2.5 + 3 && pulo - 0.5 >= -0.5 + tiroC && pulo - 0.5 <= 0.5 + tiroC) {
+		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 + 3 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 + 3 && pos_vertical_target - 0.5 >= -0.5 + tiroC && pos_vertical_target - 0.5 <= 0.5 + tiroC) {
 			endgame = true;
 		}
-		if (horizontal - 0.5 >= -0.5 - 2.5 + 3 && horizontal - 0.5 <= 0.5 + 2.5 + 3 && pulo + 0.5 >= -0.5 + tiroC && pulo + 0.5 <= 0.5 + tiroC) {
+		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 + 3 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 + 3 && pos_vertical_target + 0.5 >= -0.5 + tiroC && pos_vertical_target + 0.5 <= 0.5 + tiroC) {
 			endgame = true;
 		}
-		if (horizontal - 0.5 >= -0.5 - 2.5 + 3 && horizontal - 0.5 <= 0.5 + 2.5 + 3 && pulo - 0.5 >= -0.5 + tiroC && pulo - 0.5 <= 0.5 + tiroC) {
+		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 + 3 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 + 3 && pos_vertical_target - 0.5 >= -0.5 + tiroC && pos_vertical_target - 0.5 <= 0.5 + tiroC) {
 			endgame = true;
 		}
-
-
-
-		// dois tiros
-
-		if (horizontal + 0.5 >= -0.5 + tiroA - 2.5 && horizontal + 0.5 <= 0.5 + tiroA + 2.5 && pulo + 0.5 >= -0.5 - 7.0f && pulo + 0.5 <= 0.5 - 7.0f) {
+		//METEORO_A
+		if (pos_horizontal_target + 0.5 >= -0.5 + tiroA - 2.5 && pos_horizontal_target + 0.5 <= 0.5 + tiroA + 2.5 && pos_vertical_target + 0.5 >= -0.5 - 7.0f && pos_vertical_target + 0.5 <= 0.5 - 7.0f) {
 			endgame = true;
 		}
-		if (horizontal + 0.5 >= -0.5 + tiroA - 2.5 && horizontal + 0.5 <= 0.5 + tiroA + 2.5 && pulo - 0.5 >= -0.5 - 7.0f && pulo - 0.5 <= 0.5 - 7.0f) {
+		if (pos_horizontal_target + 0.5 >= -0.5 + tiroA - 2.5 && pos_horizontal_target + 0.5 <= 0.5 + tiroA + 2.5 && pos_vertical_target - 0.5 >= -0.5 - 7.0f && pos_vertical_target - 0.5 <= 0.5 - 7.0f) {
 			endgame = true;
 		}
-		if (horizontal - 0.5 >= -0.5 + tiroA - 2.5 && horizontal - 0.5 <= 0.5 + tiroA + 2.5&& pulo + 0.5 >= -0.5 - 7.0f && pulo + 0.5 <= 0.5 - 7.0f) {
+		if (pos_horizontal_target - 0.5 >= -0.5 + tiroA - 2.5 && pos_horizontal_target - 0.5 <= 0.5 + tiroA + 2.5&& pos_vertical_target + 0.5 >= -0.5 - 7.0f && pos_vertical_target + 0.5 <= 0.5 - 7.0f) {
 			endgame = true;
 		}
-		if (horizontal - 0.5 >= -0.5 + tiroA - 2.5 && horizontal - 0.5 <= 0.5 + tiroA + 2.5 && pulo - 0.5 >= -0.5 - 7.0f && pulo - 0.5 <= 0.5 - 7.0f) {
+		if (pos_horizontal_target - 0.5 >= -0.5 + tiroA - 2.5 && pos_horizontal_target - 0.5 <= 0.5 + tiroA + 2.5 && pos_vertical_target - 0.5 >= -0.5 - 7.0f && pos_vertical_target - 0.5 <= 0.5 - 7.0f) {
 			endgame = true;
 		}
-
-		if (horizontal + 0.5 >= -0.5 + tiroD - 2.5 && horizontal + 0.5 <= 0.5 + tiroD + 2.5 && pulo + 0.5 >= -0.5 + 1 && pulo + 0.5 <= 0.5 + 1) {
+		//METEORO_D
+		if (pos_horizontal_target + 0.5 >= -0.5 + tiroD - 2.5 && pos_horizontal_target + 0.5 <= 0.5 + tiroD + 2.5 && pos_vertical_target + 0.5 >= -0.5 + 1 && pos_vertical_target + 0.5 <= 0.5 + 1) {
 			endgame = true;
 		}
-		if (horizontal + 0.5 >= -0.5 + tiroD - 2.5 && horizontal + 0.5 <= 0.5 + tiroD + 2.5 && pulo - 0.5 >= -0.5 + 1 && pulo - 0.5 <= 0.5 + 1) {
+		if (pos_horizontal_target + 0.5 >= -0.5 + tiroD - 2.5 && pos_horizontal_target + 0.5 <= 0.5 + tiroD + 2.5 && pos_vertical_target - 0.5 >= -0.5 + 1 && pos_vertical_target - 0.5 <= 0.5 + 1) {
 			endgame = true;
 		}
-		if (horizontal - 0.5 >= -0.5 + tiroD - 2.5 && horizontal - 0.5 <= 0.5 + tiroD + 2.5&& pulo + 0.5 >= -0.5 + 1 && pulo + 0.5 <= 0.5 + 1) {
+		if (pos_horizontal_target - 0.5 >= -0.5 + tiroD - 2.5 && pos_horizontal_target - 0.5 <= 0.5 + tiroD + 2.5&& pos_vertical_target + 0.5 >= -0.5 + 1 && pos_vertical_target + 0.5 <= 0.5 + 1) {
 			endgame = true;
 		}
-		if (horizontal - 0.5 >= -0.5 + tiroD - 2.5 && horizontal - 0.5 <= 0.5 + tiroD + 2.5 && pulo - 0.5 >= -0.5 + 1 && pulo - 0.5 <= 0.5 + 1) {
+		if (pos_horizontal_target - 0.5 >= -0.5 + tiroD - 2.5 && pos_horizontal_target - 0.5 <= 0.5 + tiroD + 2.5 && pos_vertical_target - 0.5 >= -0.5 + 1 && pos_vertical_target - 0.5 <= 0.5 + 1) {
 			endgame = true;
 		}
 
 	}
-
-
-
-
-
-
-
 
 	//GAME OVER TELA
 	if (endgame == true) {
@@ -413,7 +396,6 @@ void SceneManager::render()
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	}
-
 }
 
 void SceneManager::run()
@@ -421,7 +403,6 @@ void SceneManager::run()
 	//GAME LOOP
 	while (!glfwWindowShouldClose(window))
 	{
-		
 		// Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
 		glfwPollEvents();
 
@@ -482,7 +463,6 @@ void SceneManager::setupScene()
 	glEnableVertexAttribArray(2);
 
 	setupTexture();
-
 }
 
 void SceneManager::setupCamera2D()
@@ -509,7 +489,7 @@ void SceneManager::setupCamera2D()
 void SceneManager::setupTexture()
 {
 
-	//------------------ // CENARIO // ---------------------------------------------------------//
+	//------------------ // BACKGROUND_A // ---------------------------------------------------------//
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture); 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -531,9 +511,28 @@ void SceneManager::setupTexture()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	//------------------ // BACKGROUND_B // ---------------------------------------------------------//
+	glGenTextures(1, &textureE6);
+	glBindTexture(GL_TEXTURE_2D, textureE6);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	unsigned char* data20 = stbi_load("../textures/cenario2.png", &width, &height, &nrChannels, 0);
+	if (data20) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data20);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else {
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(data20);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-
-	//------------------ // CAIXA // ---------------------------------------------------------//
+	//------------------ // METEORO // ---------------------------------------------------------//
 	glGenTextures(1, &texture1);
 	glBindTexture(GL_TEXTURE_2D, texture1);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -576,9 +575,7 @@ void SceneManager::setupTexture()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-
-
-	//------------------ // PERSONAGEM // ---------------------------------------------------------//
+	//------------------ // TARGET // ---------------------------------------------------------//
 	glGenTextures(1, &textureE1);
 	glBindTexture(GL_TEXTURE_2D, textureE1);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -618,7 +615,8 @@ void SceneManager::setupTexture()
 	glActiveTexture(GL_TEXTURE0);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//--------------7
+
+	//------------------ // START GAME // ---------------------------------------------------------//
 	glGenTextures(1, &textureE7);
 	glBindTexture(GL_TEXTURE_2D, textureE7);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -638,69 +636,8 @@ void SceneManager::setupTexture()
 	glActiveTexture(GL_TEXTURE0);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//--cenario2
-	glGenTextures(1, &textureE6);
-	glBindTexture(GL_TEXTURE_2D, textureE6);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	unsigned char *data20 = stbi_load("../textures/cenario2.png", &width, &height, &nrChannels, 0);
-	if (data20) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data20);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else {
-		std::cout << "Failed to load texture" << std::endl;
-	}
-	stbi_image_free(data20);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glActiveTexture(GL_TEXTURE0);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	//------------------ // TIRO // ---------------------------------------------------------//
-	glGenTextures(1, &texture3);
-	glBindTexture(GL_TEXTURE_2D, texture3);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	unsigned char *data10 = stbi_load("../textures/tiro.png", &width, &height, &nrChannels, 0);
-	if (data10) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data10);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else {
-		std::cout << "Failed to load texture" << std::endl;
-	}
-	stbi_image_free(data10);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glActiveTexture(GL_TEXTURE0);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//----tiroB
-	glGenTextures(1, &texture4);
-	glBindTexture(GL_TEXTURE_2D, texture4);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	unsigned char *data12 = stbi_load("../textures/tiroE.png", &width, &height, &nrChannels, 0);
-	if (data12) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data12);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else {
-		std::cout << "Failed to load texture" << std::endl;
-	}
-	stbi_image_free(data12);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glActiveTexture(GL_TEXTURE0);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	//------------------ // gameover // ---------------------------------------------------------//
+	//------------------ // GAME OVER // ---------------------------------------------------------//
 	glGenTextures(1, &textureG);
 	glBindTexture(GL_TEXTURE_2D, textureG);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -720,6 +657,4 @@ void SceneManager::setupTexture()
 	glActiveTexture(GL_TEXTURE0);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-
 }
