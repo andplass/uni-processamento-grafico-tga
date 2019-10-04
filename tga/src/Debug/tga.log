@@ -9,8 +9,8 @@ C:\Users\andpl\Desktop\repos-local\uni-processamento-grafico-tga\tga\src\SceneMa
 C:\Users\andpl\Desktop\repos-local\uni-processamento-grafico-tga\tga\src\SceneManager.cpp(134,47): warning C4244:  '=': conversion from 'double' to 'float', possible loss of data
 C:\Users\andpl\Desktop\repos-local\uni-processamento-grafico-tga\tga\src\SceneManager.cpp(141,47): warning C4244:  '=': conversion from 'double' to 'float', possible loss of data
 C:\Users\andpl\Desktop\repos-local\uni-processamento-grafico-tga\tga\src\SceneManager.cpp(225,18): warning C4244:  '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\andpl\Desktop\repos-local\uni-processamento-grafico-tga\tga\src\SceneManager.cpp(241,17): warning C4244:  '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\andpl\Desktop\repos-local\uni-processamento-grafico-tga\tga\src\SceneManager.cpp(242,17): warning C4244:  '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\andpl\Desktop\repos-local\uni-processamento-grafico-tga\tga\src\SceneManager.cpp(281,18): warning C4244:  '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\andpl\Desktop\repos-local\uni-processamento-grafico-tga\tga\src\SceneManager.cpp(294,18): warning C4244:  '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\andpl\Desktop\repos-local\uni-processamento-grafico-tga\tga\src\SceneManager.cpp(241,23): warning C4244:  '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\andpl\Desktop\repos-local\uni-processamento-grafico-tga\tga\src\SceneManager.cpp(242,23): warning C4244:  '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\andpl\Desktop\repos-local\uni-processamento-grafico-tga\tga\src\SceneManager.cpp(281,24): warning C4244:  '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\andpl\Desktop\repos-local\uni-processamento-grafico-tga\tga\src\SceneManager.cpp(294,24): warning C4244:  '=': conversion from 'double' to 'float', possible loss of data
   tga.vcxproj -> C:\Users\andpl\Desktop\repos-local\uni-processamento-grafico-tga\tga\Debug\Transforms.exe

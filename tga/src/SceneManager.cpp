@@ -13,15 +13,15 @@ float pos_vertical_target = -7;
 bool endgame = false;
 bool startgame = false;
 //projectile location attributes
-float tiroA = -20;
-float tiroB = 18;
-float tiroC = 18;
-float tiroD = -20;
-
-int cont = 0;
+float meteoroA = -20;
+float meteoroB = 18;
+float meteoroC = 18;
+float meteoroD = -20;
 //background location attributes
 float pos_background_a = 0;
 float pos_background_b = 0;
+//???
+int cont = 0;
 int d = 0;
 
 SceneManager::SceneManager()
@@ -151,10 +151,10 @@ void SceneManager::do_movement()
 	if (keys[GLFW_KEY_SPACE]) {
 		if (startgame == false) {
 			startgame = true;
-			tiroA = -20;
-			tiroB = 18;
-			tiroC = 18;
-			tiroD = -20;
+			meteoroA = -20;
+			meteoroB = 18;
+			meteoroC = 18;
+			meteoroD = -20;
 			cont = 0;
 		}
 	}
@@ -238,11 +238,11 @@ void SceneManager::render()
 
 	//METEOROS
 	if (startgame == true) {
-		tiroB = tiroB - 0.004;
-		tiroC = tiroC - 0.006;
+		meteoroB = meteoroB - 0.004;
+		meteoroC = meteoroC - 0.006;
 		glBindTexture(GL_TEXTURE_2D, texture1);
 		model2 = glm::mat4();
-		model2 = glm::translate(model2, glm::vec3(-3.0f, tiroB, 0.0f));
+		model2 = glm::translate(model2, glm::vec3(-3.0f, meteoroB, 0.0f));
 		model2 = glm::scale(model2, glm::vec3(5.0f, 5.0f, 1.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model2));
 		glBindVertexArray(VAO);
@@ -250,7 +250,7 @@ void SceneManager::render()
 	
 		glBindTexture(GL_TEXTURE_2D, texture1);
 		model2 = glm::mat4();
-		model2 = glm::translate(model2, glm::vec3(10.0f, tiroB, 0.0f));
+		model2 = glm::translate(model2, glm::vec3(10.0f, meteoroB, 0.0f));
 		model2 = glm::scale(model2, glm::vec3(5.0f, 5.0f, 1.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model2));
 		glBindVertexArray(VAO);
@@ -258,49 +258,49 @@ void SceneManager::render()
 
 		glBindTexture(GL_TEXTURE_2D, texture1);
 		model2 = glm::mat4();
-		model2 = glm::translate(model2, glm::vec3(3.0f, tiroC, 0.0f));
+		model2 = glm::translate(model2, glm::vec3(3.0f, meteoroC, 0.0f));
 		model2 = glm::scale(model2, glm::vec3(5.0f, 5.0f, 1.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model2));
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		if (tiroC < -13)
-			tiroC = 18;
+		if (meteoroC < -13)
+			meteoroC = 18;
 
 		glBindTexture(GL_TEXTURE_2D, texture1);
 		model2 = glm::mat4();
-		model2 = glm::translate(model2, glm::vec3(-10.0f, tiroC, 0.0f));
+		model2 = glm::translate(model2, glm::vec3(-10.0f, meteoroC, 0.0f));
 		model2 = glm::scale(model2, glm::vec3(5.0f, 5.0f, 1.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model2));
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		if (tiroB < -13)
-			tiroB = 18;
+		if (meteoroB < -13)
+			meteoroB = 18;
 
 		cont = cont + 1;
 		if (cont > 10000) {
-			tiroA = tiroA + 0.005;
+			meteoroA = meteoroA + 0.005;
 			glBindTexture(GL_TEXTURE_2D, texture3);
 			model5 = glm::mat4();
-			model5 = glm::translate(model5, glm::vec3(tiroA, -7.0f, 0.0f));
+			model5 = glm::translate(model5, glm::vec3(meteoroA, -7.0f, 0.0f));
 			model5 = glm::scale(model5, glm::vec3(5.0f, 5.0f, 1.0f));
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model5));
 			glBindVertexArray(VAO);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-			if (tiroA >= 18)
-				tiroA = -13;
+			if (meteoroA >= 18)
+				meteoroA = -13;
 		}
 
 		if (cont > 40000) {
-			tiroD = tiroD + 0.006;
+			meteoroD = meteoroD + 0.006;
 			glBindTexture(GL_TEXTURE_2D, texture3);
 			model5 = glm::mat4();
-			model5 = glm::translate(model5, glm::vec3(tiroD, 1.0f, 0.0f));
+			model5 = glm::translate(model5, glm::vec3(meteoroD, 1.0f, 0.0f));
 			model5 = glm::scale(model5, glm::vec3(5.0f, 5.0f, 1.0f));
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model5));
 			glBindVertexArray(VAO);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-			if (tiroD >= 18)
-				tiroD = -13;
+			if (meteoroD >= 18)
+				meteoroD = -13;
 		}
 
 
@@ -309,79 +309,79 @@ void SceneManager::render()
 
 		//METEOROS
 		// METEORO_B
-		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 - 3 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 - 3 && pos_vertical_target + 0.5 >= -0.5 + tiroB && pos_vertical_target + 0.5 <= 0.5 + tiroB) {
+		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 - 3 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 - 3 && pos_vertical_target + 0.5 >= -0.5 + meteoroB && pos_vertical_target + 0.5 <= 0.5 + meteoroB) {
 			endgame = true;
 		}
-		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 - 3 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 - 3 && pos_vertical_target - 0.5 >= -0.5 + tiroB && pos_vertical_target - 0.5 <= 0.5 + tiroB) {
+		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 - 3 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 - 3 && pos_vertical_target - 0.5 >= -0.5 + meteoroB && pos_vertical_target - 0.5 <= 0.5 + meteoroB) {
 			endgame = true;
 		}
-		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 - 3 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 - 3 && pos_vertical_target + 0.5 >= -0.5 + tiroB && pos_vertical_target + 0.5 <= 0.5 + tiroB) {
+		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 - 3 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 - 3 && pos_vertical_target + 0.5 >= -0.5 + meteoroB && pos_vertical_target + 0.5 <= 0.5 + meteoroB) {
 			endgame = true;
 		}
-		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 - 3 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 - 3 && pos_vertical_target - 0.5 >= -0.5 + tiroB && pos_vertical_target - 0.5 <= 0.5 + tiroB) {
+		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 - 3 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 - 3 && pos_vertical_target - 0.5 >= -0.5 + meteoroB && pos_vertical_target - 0.5 <= 0.5 + meteoroB) {
 			endgame = true;
 		}
-		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 + 10 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 + 10 && pos_vertical_target + 0.5 >= -0.5 + tiroB && pos_vertical_target + 0.5 <= 0.5 + tiroB) {
+		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 + 10 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 + 10 && pos_vertical_target + 0.5 >= -0.5 + meteoroB && pos_vertical_target + 0.5 <= 0.5 + meteoroB) {
 			endgame = true;
 		}
-		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 + 10 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 + 10 && pos_vertical_target - 0.5 >= -0.5 + tiroB && pos_vertical_target - 0.5 <= 0.5 + tiroB) {
+		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 + 10 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 + 10 && pos_vertical_target - 0.5 >= -0.5 + meteoroB && pos_vertical_target - 0.5 <= 0.5 + meteoroB) {
 			endgame = true;
 		}
-		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 + 10 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 + 10 && pos_vertical_target + 0.5 >= -0.5 + tiroB && pos_vertical_target + 0.5 <= 0.5 + tiroB) {
+		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 + 10 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 + 10 && pos_vertical_target + 0.5 >= -0.5 + meteoroB && pos_vertical_target + 0.5 <= 0.5 + meteoroB) {
 			endgame = true;
 		}
-		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 + 10 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 + 10 && pos_vertical_target - 0.5 >= -0.5 + tiroB && pos_vertical_target - 0.5 <= 0.5 + tiroB) {
+		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 + 10 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 + 10 && pos_vertical_target - 0.5 >= -0.5 + meteoroB && pos_vertical_target - 0.5 <= 0.5 + meteoroB) {
 			endgame = true;
 		}
 		//METEORO_C
-		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 - 10 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 - 10 && pos_vertical_target + 0.5 >= -0.5 + tiroC && pos_vertical_target + 0.5 <= 0.5 + tiroC) {
+		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 - 10 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 - 10 && pos_vertical_target + 0.5 >= -0.5 + meteoroC && pos_vertical_target + 0.5 <= 0.5 + meteoroC) {
 			endgame = true;
 		}
-		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 - 10 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 - 10 && pos_vertical_target - 0.5 >= -0.5 + tiroC && pos_vertical_target - 0.5 <= 0.5 + tiroC) {
+		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 - 10 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 - 10 && pos_vertical_target - 0.5 >= -0.5 + meteoroC && pos_vertical_target - 0.5 <= 0.5 + meteoroC) {
 			endgame = true;
 		}
-		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 - 10 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 - 10 && pos_vertical_target + 0.5 >= -0.5 + tiroC && pos_vertical_target + 0.5 <= 0.5 + tiroC) {
+		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 - 10 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 - 10 && pos_vertical_target + 0.5 >= -0.5 + meteoroC && pos_vertical_target + 0.5 <= 0.5 + meteoroC) {
 			endgame = true;
 		}
-		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 - 10 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 - 10 && pos_vertical_target - 0.5 >= -0.5 + tiroC && pos_vertical_target - 0.5 <= 0.5 + tiroC) {
+		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 - 10 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 - 10 && pos_vertical_target - 0.5 >= -0.5 + meteoroC && pos_vertical_target - 0.5 <= 0.5 + meteoroC) {
 			endgame = true;
 		}
-		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 + 3 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 + 3 && pos_vertical_target + 0.5 >= -0.5 + tiroC && pos_vertical_target + 0.5 <= 0.5 + tiroC) {
+		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 + 3 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 + 3 && pos_vertical_target + 0.5 >= -0.5 + meteoroC && pos_vertical_target + 0.5 <= 0.5 + meteoroC) {
 			endgame = true;
 		}
-		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 + 3 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 + 3 && pos_vertical_target - 0.5 >= -0.5 + tiroC && pos_vertical_target - 0.5 <= 0.5 + tiroC) {
+		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 + 3 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 + 3 && pos_vertical_target - 0.5 >= -0.5 + meteoroC && pos_vertical_target - 0.5 <= 0.5 + meteoroC) {
 			endgame = true;
 		}
-		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 + 3 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 + 3 && pos_vertical_target + 0.5 >= -0.5 + tiroC && pos_vertical_target + 0.5 <= 0.5 + tiroC) {
+		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 + 3 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 + 3 && pos_vertical_target + 0.5 >= -0.5 + meteoroC && pos_vertical_target + 0.5 <= 0.5 + meteoroC) {
 			endgame = true;
 		}
-		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 + 3 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 + 3 && pos_vertical_target - 0.5 >= -0.5 + tiroC && pos_vertical_target - 0.5 <= 0.5 + tiroC) {
+		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 + 3 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 + 3 && pos_vertical_target - 0.5 >= -0.5 + meteoroC && pos_vertical_target - 0.5 <= 0.5 + meteoroC) {
 			endgame = true;
 		}
 		//METEORO_A
-		if (pos_horizontal_target + 0.5 >= -0.5 + tiroA - 2.5 && pos_horizontal_target + 0.5 <= 0.5 + tiroA + 2.5 && pos_vertical_target + 0.5 >= -0.5 - 7.0f && pos_vertical_target + 0.5 <= 0.5 - 7.0f) {
+		if (pos_horizontal_target + 0.5 >= -0.5 + meteoroA - 2.5 && pos_horizontal_target + 0.5 <= 0.5 + meteoroA + 2.5 && pos_vertical_target + 0.5 >= -0.5 - 7.0f && pos_vertical_target + 0.5 <= 0.5 - 7.0f) {
 			endgame = true;
 		}
-		if (pos_horizontal_target + 0.5 >= -0.5 + tiroA - 2.5 && pos_horizontal_target + 0.5 <= 0.5 + tiroA + 2.5 && pos_vertical_target - 0.5 >= -0.5 - 7.0f && pos_vertical_target - 0.5 <= 0.5 - 7.0f) {
+		if (pos_horizontal_target + 0.5 >= -0.5 + meteoroA - 2.5 && pos_horizontal_target + 0.5 <= 0.5 + meteoroA + 2.5 && pos_vertical_target - 0.5 >= -0.5 - 7.0f && pos_vertical_target - 0.5 <= 0.5 - 7.0f) {
 			endgame = true;
 		}
-		if (pos_horizontal_target - 0.5 >= -0.5 + tiroA - 2.5 && pos_horizontal_target - 0.5 <= 0.5 + tiroA + 2.5&& pos_vertical_target + 0.5 >= -0.5 - 7.0f && pos_vertical_target + 0.5 <= 0.5 - 7.0f) {
+		if (pos_horizontal_target - 0.5 >= -0.5 + meteoroA - 2.5 && pos_horizontal_target - 0.5 <= 0.5 + meteoroA + 2.5&& pos_vertical_target + 0.5 >= -0.5 - 7.0f && pos_vertical_target + 0.5 <= 0.5 - 7.0f) {
 			endgame = true;
 		}
-		if (pos_horizontal_target - 0.5 >= -0.5 + tiroA - 2.5 && pos_horizontal_target - 0.5 <= 0.5 + tiroA + 2.5 && pos_vertical_target - 0.5 >= -0.5 - 7.0f && pos_vertical_target - 0.5 <= 0.5 - 7.0f) {
+		if (pos_horizontal_target - 0.5 >= -0.5 + meteoroA - 2.5 && pos_horizontal_target - 0.5 <= 0.5 + meteoroA + 2.5 && pos_vertical_target - 0.5 >= -0.5 - 7.0f && pos_vertical_target - 0.5 <= 0.5 - 7.0f) {
 			endgame = true;
 		}
 		//METEORO_D
-		if (pos_horizontal_target + 0.5 >= -0.5 + tiroD - 2.5 && pos_horizontal_target + 0.5 <= 0.5 + tiroD + 2.5 && pos_vertical_target + 0.5 >= -0.5 + 1 && pos_vertical_target + 0.5 <= 0.5 + 1) {
+		if (pos_horizontal_target + 0.5 >= -0.5 + meteoroD - 2.5 && pos_horizontal_target + 0.5 <= 0.5 + meteoroD + 2.5 && pos_vertical_target + 0.5 >= -0.5 + 1 && pos_vertical_target + 0.5 <= 0.5 + 1) {
 			endgame = true;
 		}
-		if (pos_horizontal_target + 0.5 >= -0.5 + tiroD - 2.5 && pos_horizontal_target + 0.5 <= 0.5 + tiroD + 2.5 && pos_vertical_target - 0.5 >= -0.5 + 1 && pos_vertical_target - 0.5 <= 0.5 + 1) {
+		if (pos_horizontal_target + 0.5 >= -0.5 + meteoroD - 2.5 && pos_horizontal_target + 0.5 <= 0.5 + meteoroD + 2.5 && pos_vertical_target - 0.5 >= -0.5 + 1 && pos_vertical_target - 0.5 <= 0.5 + 1) {
 			endgame = true;
 		}
-		if (pos_horizontal_target - 0.5 >= -0.5 + tiroD - 2.5 && pos_horizontal_target - 0.5 <= 0.5 + tiroD + 2.5&& pos_vertical_target + 0.5 >= -0.5 + 1 && pos_vertical_target + 0.5 <= 0.5 + 1) {
+		if (pos_horizontal_target - 0.5 >= -0.5 + meteoroD - 2.5 && pos_horizontal_target - 0.5 <= 0.5 + meteoroD + 2.5&& pos_vertical_target + 0.5 >= -0.5 + 1 && pos_vertical_target + 0.5 <= 0.5 + 1) {
 			endgame = true;
 		}
-		if (pos_horizontal_target - 0.5 >= -0.5 + tiroD - 2.5 && pos_horizontal_target - 0.5 <= 0.5 + tiroD + 2.5 && pos_vertical_target - 0.5 >= -0.5 + 1 && pos_vertical_target - 0.5 <= 0.5 + 1) {
+		if (pos_horizontal_target - 0.5 >= -0.5 + meteoroD - 2.5 && pos_horizontal_target - 0.5 <= 0.5 + meteoroD + 2.5 && pos_vertical_target - 0.5 >= -0.5 + 1 && pos_vertical_target - 0.5 <= 0.5 + 1) {
 			endgame = true;
 		}
 
