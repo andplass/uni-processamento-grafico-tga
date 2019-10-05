@@ -12,19 +12,21 @@ const float MAX_SCENE_HEIGHT = 10;
 const float MIN_SCENE_HEIGHT = -10;
 //atributos do alvo
 const float POS_ALVO_HORIZONTAL = -11;
-const float VELOCIDADE_MOV_ALVO = 0.005;
+const float VELOCIDADE_MOV_ALVO = 0.0075;
 const glm::vec3 escala_alvo = glm::vec3(2.0f, 2.0f, 0.0f);
 float pos_alvo_vertical = 0;
 //atributos do atirador
 const float POS_ATIRADOR_HORIZONTAL = 11;
-const float VELOCIDADE_MOV_ATIRADOR = 0.008;
+const float VELOCIDADE_MOV_ATIRADOR = 0.0085;
 const glm::vec3 escala_atirador = glm::vec3(5.0f, 5.0f, 0.0f);
 float pos_atirador_vertical = 0;
 //atributos das flecha
+const float VELOCIDADE_MOV_FLECHA = 0.045;
+const float POS_FLECHA_HORIZONTAL_INICIAL = POS_ATIRADOR_HORIZONTAL;
+const glm::vec3 escala_flecha = glm::vec3(2.9f, 0.6f, 0.0f);
 float pos_flecha_horizontal = 0;
 float pos_flecha_vertical = 0;
 bool is_flecha_disparda = false;
-const glm::vec3 escala_flecha = glm::vec3(2.9f, 0.6f, 0.0f);
 //atributos do cenario
 const glm::vec3 escala_cenario = glm::vec3(30.0f, 30.0f, 0.0f);
 float pos_cenario_vertical = 0;
@@ -32,6 +34,7 @@ float pos_cenario_vertical = 0;
 const float ZERO = 0;
 const float POS_NUVEM_Z = 0;
 const float POS_PLAYER_Z = 0;
+const float OUT_OF_BOUNDS = 50;
 
 SceneManager::SceneManager()
 {
@@ -141,6 +144,9 @@ void SceneManager::processInput()
 	}
 	if (keys[GLFW_KEY_SPACE]) {
 		if (!is_flecha_disparda) {
+			is_flecha_disparda = true;
+			pos_flecha_vertical = pos_atirador_vertical;
+			pos_flecha_horizontal = POS_FLECHA_HORIZONTAL_INICIAL;
 			//posicionar a flecha na frente do atirador (y = altura do atirador atual se mantem) (x inicial = fixo)
 		}
 	}
@@ -149,12 +155,12 @@ void SceneManager::processInput()
 void SceneManager::calculateCollisions()
 {
 	//FLECHA E ALVO
-	if (POS_ALVO_HORIZONTAL + 0.5 >= -0.5 + pos_flecha_horizontal - 2.5
-		&& POS_ALVO_HORIZONTAL + 0.5 <= 0.5 + pos_flecha_horizontal + 2.5
-		&& pos_alvo_vertical + 0.5 >= -0.5 - 7.0f
-		&& pos_alvo_vertical + 0.5 <= 0.5 - 7.0f) {
+	if (pos_flecha_vertical <= pos_alvo_vertical + 1
+		&& pos_flecha_vertical >= pos_alvo_vertical - 1
+		&& pos_flecha_horizontal <= POS_ALVO_HORIZONTAL + 2) {
 		pontuacao++;
 		cout << "Pontuacao: " << pontuacao;
+		is_flecha_disparda = false;
 	}
 }
 
@@ -211,16 +217,31 @@ void SceneManager::render()
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 	//FLECHA
-	pos_flecha_horizontal -= 0.005;
-	glBindTexture(GL_TEXTURE_2D, textura_flecha);
-	model_flecha = glm::mat4();
-	model_flecha = glm::translate(model_flecha, glm::vec3(pos_flecha_horizontal, 0.0f, POS_PLAYER_Z));
-	model_flecha = glm::scale(model_flecha, escala_flecha);
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model_flecha));
-	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-	if (pos_flecha_horizontal <= -18)
-		pos_flecha_horizontal = 18;
+	if (pos_flecha_horizontal <= -18) {
+		is_flecha_disparda = false;
+		pos_flecha_horizontal = OUT_OF_BOUNDS;
+	}
+	if (is_flecha_disparda) {
+		pos_flecha_horizontal -= VELOCIDADE_MOV_FLECHA;
+		glBindTexture(GL_TEXTURE_2D, textura_flecha);
+		model_flecha = glm::mat4();
+		model_flecha = glm::translate(model_flecha, glm::vec3(pos_flecha_horizontal, pos_flecha_vertical, POS_PLAYER_Z));
+		model_flecha = glm::scale(model_flecha, escala_flecha);
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model_flecha));
+		glBindVertexArray(VAO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	}
+	if (!is_flecha_disparda || pos_flecha_horizontal <= -18) {
+		is_flecha_disparda = false;
+		pos_flecha_horizontal = OUT_OF_BOUNDS;
+		glBindTexture(GL_TEXTURE_2D, textura_flecha);
+		model_flecha = glm::mat4();
+		model_flecha = glm::translate(model_flecha, glm::vec3(pos_flecha_horizontal, pos_flecha_vertical, POS_PLAYER_Z));
+		model_flecha = glm::scale(model_flecha, escala_flecha);
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model_flecha));
+		glBindVertexArray(VAO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	}
 
 	calculateCollisions();
 }
