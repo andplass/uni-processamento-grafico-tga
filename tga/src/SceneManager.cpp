@@ -1,22 +1,37 @@
 #include "SceneManager.h"
+
 //static controllers for mouse and keyboard
 static bool keys[1024];
 //window attributes
 static bool resized;
 static GLuint width, height;
-//custom global variables
+//atributos globais customizados
 int pontuacao = 0;
-//viewport
-const float MAX_SCENE_HEIGHT = 9;
-const float MIN_SCENE_HEIGHT = -9;
-//target location attributes
+//atributos do viewport
+const float MAX_SCENE_HEIGHT = 10;
+const float MIN_SCENE_HEIGHT = -10;
+//atributos do alvo
 const float POS_ALVO_HORIZONTAL = -11;
-float pos_alvo_vertical = -0;
-//projectile location attributes
-float pos_flecha_1_horizontal = -20;
-float pos_flecha_2_horizontal = 18;
-//background location attributes
-const float POS_BACKGROUND = 0;
+const float VELOCIDADE_MOV_ALVO = 0.005;
+const glm::vec3 escala_alvo = glm::vec3(2.0f, 2.0f, 0.0f);
+float pos_alvo_vertical = 0;
+//atributos do atirador
+const float POS_ATIRADOR_HORIZONTAL = 11;
+const float VELOCIDADE_MOV_ATIRADOR = 0.008;
+const glm::vec3 escala_atirador = glm::vec3(5.0f, 5.0f, 0.0f);
+float pos_atirador_vertical = 0;
+//atributos das flecha
+float pos_flecha_horizontal = 0;
+float pos_flecha_vertical = 0;
+bool is_flecha_disparda = false;
+const glm::vec3 escala_flecha = glm::vec3(2.9f, 0.6f, 0.0f);
+//atributos do cenario
+const glm::vec3 escala_cenario = glm::vec3(30.0f, 30.0f, 0.0f);
+float pos_cenario_vertical = 0;
+//outros atributos
+const float ZERO = 0;
+const float POS_NUVEM_Z = 0;
+const float POS_PLAYER_Z = 0;
 
 SceneManager::SceneManager()
 {
@@ -99,24 +114,47 @@ void SceneManager::resize(GLFWwindow * window, int w, int h)
 }
 
 
-void SceneManager::do_movement()
+void SceneManager::processInput()
 {
 	if (keys[GLFW_KEY_ESCAPE])
 		glfwSetWindowShouldClose(window, GL_TRUE);
 
 	if (keys[GLFW_KEY_W]) {
-		if (pos_alvo_vertical < MAX_SCENE_HEIGHT) {
-			for (int i = 0; i < 4; i++) {
-				pos_alvo_vertical = pos_alvo_vertical + 0.005;
-			}
+		if (pos_alvo_vertical < MAX_SCENE_HEIGHT-1) {
+			pos_alvo_vertical += VELOCIDADE_MOV_ALVO;
 		}
 	}
 	if (keys[GLFW_KEY_S]) {
-		if (pos_alvo_vertical > MIN_SCENE_HEIGHT) {
-			for (int i = 0; i < 4; i++) {
-				pos_alvo_vertical = pos_alvo_vertical - 0.005;
-			}
+		if (pos_alvo_vertical > MIN_SCENE_HEIGHT+1) {
+			pos_alvo_vertical -= VELOCIDADE_MOV_ALVO;
 		}
+	}
+	if (keys[GLFW_KEY_O]) {
+		if (pos_atirador_vertical < MAX_SCENE_HEIGHT-1) {
+			pos_atirador_vertical += VELOCIDADE_MOV_ATIRADOR;
+		}
+	}
+	if (keys[GLFW_KEY_L]) {
+		if (pos_atirador_vertical > MIN_SCENE_HEIGHT+1) {
+			pos_atirador_vertical -= VELOCIDADE_MOV_ATIRADOR;
+		}
+	}
+	if (keys[GLFW_KEY_SPACE]) {
+		if (!is_flecha_disparda) {
+			//posicionar a flecha na frente do atirador (y = altura do atirador atual se mantem) (x inicial = fixo)
+		}
+	}
+}
+
+void SceneManager::calculateCollisions()
+{
+	//FLECHA E ALVO
+	if (POS_ALVO_HORIZONTAL + 0.5 >= -0.5 + pos_flecha_horizontal - 2.5
+		&& POS_ALVO_HORIZONTAL + 0.5 <= 0.5 + pos_flecha_horizontal + 2.5
+		&& pos_alvo_vertical + 0.5 >= -0.5 - 7.0f
+		&& pos_alvo_vertical + 0.5 <= 0.5 - 7.0f) {
+		pontuacao++;
+		cout << "Pontuacao: " << pontuacao;
 	}
 }
 
@@ -142,138 +180,49 @@ void SceneManager::render()
 	}
 
 	// Bind Textures using texture units
-	glUniform1i(glGetUniformLocation(shader->Program, "ourTexture1"), 0);
+	glUniform1i(glGetUniformLocation(shader->Program, "texture"), 0);
 
-	//BACKGROUND
-	glBindTexture(GL_TEXTURE_2D, background);
-	modelC = glm::mat4();
-	modelC = glm::translate(modelC, glm::vec3(POS_BACKGROUND, -3.5f, 0.0f));
-	modelC = glm::scale(modelC, glm::vec3(35.0f, 25.0f, 1.0f));
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelC));
+	//CENARIO
+	pos_cenario_vertical = -(pos_alvo_vertical + pos_atirador_vertical) / 6;
+	glBindTexture(GL_TEXTURE_2D, textura_cenario);
+	model_background = glm::mat4();
+	model_background = glm::translate(model_background, glm::vec3(ZERO, pos_cenario_vertical, ZERO));
+	model_background = glm::scale(model_background, escala_cenario);
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model_background));
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 	//ALVO
-	glBindTexture(GL_TEXTURE_2D, alvo);
-	model3 = glm::mat4();
-	model3 = glm::translate(model3, glm::vec3(POS_ALVO_HORIZONTAL, pos_alvo_vertical, 0.0f));
-	model3 = glm::scale(model3, glm::vec3(5.0f, 5.0f, 1.0f));
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model3));
+	glBindTexture(GL_TEXTURE_2D, textura_alvo);
+	model_alvo = glm::mat4();
+	model_alvo = glm::translate(model_alvo, glm::vec3(POS_ALVO_HORIZONTAL, pos_alvo_vertical, POS_PLAYER_Z));
+	model_alvo = glm::scale(model_alvo, escala_alvo);
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model_alvo));
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-	//FLECHAS
-	pos_flecha_1_horizontal = pos_flecha_1_horizontal + 0.005;
-	glBindTexture(GL_TEXTURE_2D, texture3);
-	model5 = glm::mat4();
-	model5 = glm::translate(model5, glm::vec3(pos_flecha_1_horizontal, -7.0f, 0.0f));
-	model5 = glm::scale(model5, glm::vec3(5.0f, 5.0f, 1.0f));
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model5));
-	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-	if (pos_flecha_1_horizontal >= 18)
-		pos_flecha_1_horizontal = -13;
-
-	pos_flecha_2_horizontal = pos_flecha_2_horizontal - 0.004;
-	glBindTexture(GL_TEXTURE_2D, texture1);
-	model2 = glm::mat4();
-	model2 = glm::translate(model2, glm::vec3(pos_flecha_2_horizontal, -3.0f, 0.0f));
-	model2 = glm::scale(model2, glm::vec3(5.0f, 5.0f, 1.0f));
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model2));
-	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-	
-	glBindTexture(GL_TEXTURE_2D, texture1);
-	model2 = glm::mat4();
-	model2 = glm::translate(model2, glm::vec3(pos_flecha_2_horizontal, -10.0f, 0.0f));
-	model2 = glm::scale(model2, glm::vec3(5.0f, 5.0f, 1.0f));
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model2));
+	//ATIRADOR
+	glBindTexture(GL_TEXTURE_2D, textura_atirador);
+	model_atirador = glm::mat4();
+	model_atirador = glm::translate(model_atirador, glm::vec3(POS_ATIRADOR_HORIZONTAL, pos_atirador_vertical, POS_PLAYER_Z));
+	model_atirador = glm::scale(model_atirador, escala_atirador);
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model_atirador));
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-	//COLISAO
-	// FLECHA_B
-	if (POS_ALVO_HORIZONTAL + 0.5 >= -0.5 - 2.5 - 3 
-		&& POS_ALVO_HORIZONTAL + 0.5 <= 0.5 + 2.5 - 3 
-		&& pos_alvo_vertical + 0.5 >= -0.5 + pos_flecha_2_horizontal 
-		&& pos_alvo_vertical + 0.5 <= 0.5 + pos_flecha_2_horizontal) {
-		pontuacao++;
-		cout << "Pontuacao: " << pontuacao;
-	}
-	if (POS_ALVO_HORIZONTAL + 0.5 >= -0.5 - 2.5 - 3 
-		&& POS_ALVO_HORIZONTAL + 0.5 <= 0.5 + 2.5 - 3 
-		&& pos_alvo_vertical - 0.5 >= -0.5 + pos_flecha_2_horizontal 
-		&& pos_alvo_vertical - 0.5 <= 0.5 + pos_flecha_2_horizontal) {
-		pontuacao++;
-		cout << "Pontuacao: " << pontuacao;
-	}
-	if (POS_ALVO_HORIZONTAL - 0.5 >= -0.5 - 2.5 - 3 
-		&& POS_ALVO_HORIZONTAL - 0.5 <= 0.5 + 2.5 - 3 
-		&& pos_alvo_vertical + 0.5 >= -0.5 + pos_flecha_2_horizontal 
-		&& pos_alvo_vertical + 0.5 <= 0.5 + pos_flecha_2_horizontal) {
-		pontuacao++;
-		cout << "Pontuacao: " << pontuacao;
-	}
-	if (POS_ALVO_HORIZONTAL - 0.5 >= -0.5 - 2.5 - 3 
-		&& POS_ALVO_HORIZONTAL - 0.5 <= 0.5 + 2.5 - 3 
-		&& pos_alvo_vertical - 0.5 >= -0.5 + pos_flecha_2_horizontal 
-		&& pos_alvo_vertical - 0.5 <= 0.5 + pos_flecha_2_horizontal) {
-		pontuacao++;
-		cout << "Pontuacao: " << pontuacao;
-	}
-	if (POS_ALVO_HORIZONTAL + 0.5 >= -0.5 - 2.5 + 10 
-		&& POS_ALVO_HORIZONTAL + 0.5 <= 0.5 + 2.5 + 10 
-		&& pos_alvo_vertical + 0.5 >= -0.5 + pos_flecha_2_horizontal && pos_alvo_vertical + 0.5 <= 0.5 + pos_flecha_2_horizontal) {
-		pontuacao++;
-		cout << "Pontuacao: " << pontuacao;
-	}
-	if (POS_ALVO_HORIZONTAL + 0.5 >= -0.5 - 2.5 + 10 
-		&& POS_ALVO_HORIZONTAL + 0.5 <= 0.5 + 2.5 + 10 
-		&& pos_alvo_vertical - 0.5 >= -0.5 + pos_flecha_2_horizontal 
-		&& pos_alvo_vertical - 0.5 <= 0.5 + pos_flecha_2_horizontal) {
-		pontuacao++;
-		cout << "Pontuacao: " << pontuacao;
-	}
-	if (POS_ALVO_HORIZONTAL - 0.5 >= -0.5 - 2.5 + 10 
-		&& POS_ALVO_HORIZONTAL - 0.5 <= 0.5 + 2.5 + 10 
-		&& pos_alvo_vertical + 0.5 >= -0.5 + pos_flecha_2_horizontal 
-		&& pos_alvo_vertical + 0.5 <= 0.5 + pos_flecha_2_horizontal) {
-		pontuacao++;
-		cout << "Pontuacao: " << pontuacao;
-	}
-	if (POS_ALVO_HORIZONTAL - 0.5 >= -0.5 - 2.5 + 10 
-		&& POS_ALVO_HORIZONTAL - 0.5 <= 0.5 + 2.5 + 10 
-		&& pos_alvo_vertical - 0.5 >= -0.5 + pos_flecha_2_horizontal 
-		&& pos_alvo_vertical - 0.5 <= 0.5 + pos_flecha_2_horizontal) {
-		pontuacao++;
-		cout << "Pontuacao: " << pontuacao;
-	}
+	//FLECHA
+	pos_flecha_horizontal -= 0.005;
+	glBindTexture(GL_TEXTURE_2D, textura_flecha);
+	model_flecha = glm::mat4();
+	model_flecha = glm::translate(model_flecha, glm::vec3(pos_flecha_horizontal, 0.0f, POS_PLAYER_Z));
+	model_flecha = glm::scale(model_flecha, escala_flecha);
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model_flecha));
+	glBindVertexArray(VAO);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	if (pos_flecha_horizontal <= -18)
+		pos_flecha_horizontal = 18;
 
-	//FLECHA_A
-	if (POS_ALVO_HORIZONTAL + 0.5 >= -0.5 + pos_flecha_1_horizontal - 2.5 
-		&& POS_ALVO_HORIZONTAL + 0.5 <= 0.5 + pos_flecha_1_horizontal + 2.5 
-		&& pos_alvo_vertical + 0.5 >= -0.5 - 7.0f && pos_alvo_vertical + 0.5 <= 0.5 - 7.0f) {
-		pontuacao++;
-		cout << "Pontuacao: " << pontuacao;
-	}
-	if (POS_ALVO_HORIZONTAL + 0.5 >= -0.5 + pos_flecha_1_horizontal - 2.5 
-		&& POS_ALVO_HORIZONTAL + 0.5 <= 0.5 + pos_flecha_1_horizontal + 2.5 
-		&& pos_alvo_vertical - 0.5 >= -0.5 - 7.0f && pos_alvo_vertical - 0.5 <= 0.5 - 7.0f) {
-		pontuacao++;
-		cout << "Pontuacao: " << pontuacao;
-	}
-	if (POS_ALVO_HORIZONTAL - 0.5 >= -0.5 + pos_flecha_1_horizontal - 2.5 
-		&& POS_ALVO_HORIZONTAL - 0.5 <= 0.5 + pos_flecha_1_horizontal + 2.5 
-		&& pos_alvo_vertical + 0.5 >= -0.5 - 7.0f && pos_alvo_vertical + 0.5 <= 0.5 - 7.0f) {
-		pontuacao++;
-		cout << "Pontuacao: " << pontuacao;
-	}
-	if (POS_ALVO_HORIZONTAL - 0.5 >= -0.5 + pos_flecha_1_horizontal - 2.5 
-		&& POS_ALVO_HORIZONTAL - 0.5 <= 0.5 + pos_flecha_1_horizontal + 2.5 
-		&& pos_alvo_vertical - 0.5 >= -0.5 - 7.0f && pos_alvo_vertical - 0.5 <= 0.5 - 7.0f) {
-		pontuacao++;
-		cout << "Pontuacao: " << pontuacao;
-	}
+	calculateCollisions();
 }
 
 void SceneManager::run()
@@ -285,7 +234,7 @@ void SceneManager::run()
 		glfwPollEvents();
 
 		//Update method(s)
-		do_movement();
+		processInput();
 
 		//Render scene
 		render();
@@ -300,7 +249,6 @@ void SceneManager::finish()
 	// Terminate GLFW, clearing any resources allocated by GLFW.
 	glfwTerminate();
 }
-
 
 void SceneManager::setupScene()
 {
@@ -366,65 +314,86 @@ void SceneManager::setupCamera2D()
 
 void SceneManager::setupTexture()
 {
-	//------------------ // BACKGROUND // ---------------------------------------------------------//
-	glGenTextures(1, &background);
-	glBindTexture(GL_TEXTURE_2D, background); 
+	int width, height, nrChannels;
+	//------------------ // CENARIO // ---------------------------------------------------------//
+	glGenTextures(1, &textura_cenario);
+	glBindTexture(GL_TEXTURE_2D, textura_cenario); 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	int width, height, nrChannels;
-	unsigned char *data = stbi_load("../textures/ceu_2.png", &width, &height, &nrChannels, 0);
-	if (data){
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+	unsigned char *textura_cenario_file = stbi_load("../textures/ceu_2.png", &width, &height, &nrChannels, 0);
+	if (textura_cenario_file){
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, textura_cenario_file);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else{
 		std::cout << "Failed to load texture" << std::endl;
 	}
-	stbi_image_free(data);
+	stbi_image_free(textura_cenario_file);
 	glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
 	glActiveTexture(GL_TEXTURE0);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//------------------ // FLECHA // ---------------------------------------------------------//
-	glGenTextures(1, &texture1);
-	glBindTexture(GL_TEXTURE_2D, texture1);
+	glGenTextures(1, &textura_flecha);
+	glBindTexture(GL_TEXTURE_2D, textura_flecha);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	unsigned char *data1 = stbi_load("../textures/flecha.png", &width, &height, &nrChannels, 0);
-	if (data1){
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data1);
+	unsigned char *textura_flecha_file = stbi_load("../textures/flecha.png", &width, &height, &nrChannels, 0);
+	if (textura_flecha_file){
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_flecha_file);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else{
 		std::cout << "Failed to load texture" << std::endl;
 	}
-	stbi_image_free(data1);
+	stbi_image_free(textura_flecha_file);
 	glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
 	glActiveTexture(GL_TEXTURE0);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//------------------ // ALVO // ---------------------------------------------------------//
-	glGenTextures(1, &alvo);
-	glBindTexture(GL_TEXTURE_2D, alvo);
+	glGenTextures(1, &textura_alvo);
+	glBindTexture(GL_TEXTURE_2D, textura_alvo);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	unsigned char *data3 = stbi_load("../textures/alvo.png", &width, &height, &nrChannels, 0);
-	if (data3) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data3);
+	unsigned char *textura_alvo_file = stbi_load("../textures/alvo.png", &width, &height, &nrChannels, 0);
+	if (textura_alvo_file) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_alvo_file);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else {
 		std::cout << "Failed to load texture" << std::endl;
 	}
-	stbi_image_free(data3);
+	stbi_image_free(textura_alvo_file);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	//------------------ // ALVO // ---------------------------------------------------------//
+	glGenTextures(1, &textura_atirador);
+	glBindTexture(GL_TEXTURE_2D, textura_atirador);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	unsigned char* textura_atirador_file = stbi_load("../textures/anjo.png", &width, &height, &nrChannels, 0);
+	if (textura_atirador_file) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_atirador_file);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else {
+		std::cout << "Failed to load texture" << std::endl;
+	}
+	stbi_image_free(textura_atirador_file);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glActiveTexture(GL_TEXTURE0);
 	glEnable(GL_BLEND);

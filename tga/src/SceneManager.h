@@ -22,11 +22,11 @@ public:
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 	static void resize(GLFWwindow* window, int width, int height);
 
-	void do_movement();
+	void processInput();
 	void render();
 	void run();
 	void finish();
-
+	void calculateCollisions();
 
 	// scene
 	void setupScene();
@@ -42,22 +42,16 @@ private:
 
 	//scene attributes
 	GLuint VAO;
-
 	//Transformations - Model Matrix
-	glm::mat4 model; 
-	glm::mat4 model2;
-	glm::mat4 model3;
-	glm::mat4 model4;
-	glm::mat4 model5;
-	glm::mat4 model6;
-	glm::mat4 model7;
-	glm::mat4 model8;
-	glm::mat4 modelC;
+	glm::mat4 model_alvo;
+	glm::mat4 model_flecha;
+	glm::mat4 model_nuvens;
+	glm::mat4 model_atirador;
+	glm::mat4 model_background;
 	//2D Camera - Projection matrix
 	glm::mat4 projection;
-
 	//Texture index
-	unsigned int texture, texture1, texture2,texture3,texture4 ,alvo, textureE2, textureE3, textureE4, textureE5, background, textureE7,textureG;
+	unsigned int textura_flecha, textura_alvo, textura_cenario, textura_atirador, textura_nuvens;
 
 };
 
