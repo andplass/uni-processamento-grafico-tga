@@ -5,24 +5,18 @@ static bool keys[1024];
 static bool resized;
 static GLuint width, height;
 //custom global variables
-float nuvens = -5.0;
+int pontuacao = 0;
+//viewport
+const float MAX_SCENE_HEIGHT = 9;
+const float MIN_SCENE_HEIGHT = -9;
 //target location attributes
-float pos_horizontal_target = 2;
-float pos_vertical_target = -7;
-//game state attributes
-bool endgame = false;
-bool startgame = false;
+const float POS_ALVO_HORIZONTAL = -11;
+float pos_alvo_vertical = -0;
 //projectile location attributes
-float meteoroA = -20;
-float meteoroB = 18;
-float meteoroC = 18;
-float meteoroD = -20;
+float pos_flecha_1_horizontal = -20;
+float pos_flecha_2_horizontal = 18;
 //background location attributes
-float pos_background_a = 0;
-float pos_background_b = 0;
-//???
-int cont = 0;
-int d = 0;
+const float POS_BACKGROUND = 0;
 
 SceneManager::SceneManager()
 {
@@ -48,7 +42,7 @@ void SceneManager::initializeGraphics()
 	glfwInit();
 
 	// Create a GLFWwindow object that we can use for GLFW's functions
-	window = glfwCreateWindow(width, height, "Hello Transform", nullptr, nullptr);
+	window = glfwCreateWindow(width, height, "TGA", nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 
 	// Set the required callback functions
@@ -110,52 +104,18 @@ void SceneManager::do_movement()
 	if (keys[GLFW_KEY_ESCAPE])
 		glfwSetWindowShouldClose(window, GL_TRUE);
 
-	if (keys[GLFW_KEY_D]){
-		if (pos_horizontal_target < 12){
-			pos_horizontal_target = pos_horizontal_target + 0.007;
-			pos_background_a = pos_background_a + 0.002;
-			pos_background_b = pos_background_b + 0.0009;
-			d = 0;
-		}
-	}
-		
-	if (keys[GLFW_KEY_A]) {
-		if (pos_horizontal_target > -12) {
-			pos_horizontal_target = pos_horizontal_target - 0.007;
-			pos_background_a = pos_background_a - 0.002;
-			pos_background_b = pos_background_b - 0.0009;
-			d = 1;
-		}
-	}
-
 	if (keys[GLFW_KEY_W]) {
-		if (pos_vertical_target < 4) {
+		if (pos_alvo_vertical < MAX_SCENE_HEIGHT) {
 			for (int i = 0; i < 4; i++) {
-				pos_vertical_target = pos_vertical_target + 0.005;
+				pos_alvo_vertical = pos_alvo_vertical + 0.005;
 			}
 		}
 	}
 	if (keys[GLFW_KEY_S]) {
-		if (pos_vertical_target > -7) {
+		if (pos_alvo_vertical > MIN_SCENE_HEIGHT) {
 			for (int i = 0; i < 4; i++) {
-				pos_vertical_target = pos_vertical_target - 0.005;
+				pos_alvo_vertical = pos_alvo_vertical - 0.005;
 			}
-		}
-	}
-
-	if (keys[GLFW_KEY_ENTER]) {
-		endgame = false;
-		startgame = false;
-	}
-
-	if (keys[GLFW_KEY_SPACE]) {
-		if (startgame == false) {
-			startgame = true;
-			meteoroA = -20;
-			meteoroB = 18;
-			meteoroC = 18;
-			meteoroD = -20;
-			cont = 0;
 		}
 	}
 }
@@ -175,8 +135,6 @@ void SceneManager::render()
 	GLint modelLoc = glGetUniformLocation(shader->Program, "model");
 
 	// Pass them to the shaders
-	
-
 	if (resized) //se houve redimensionamento na janela, redefine a projection matrix
 	{
 		setupCamera2D();
@@ -186,215 +144,135 @@ void SceneManager::render()
 	// Bind Textures using texture units
 	glUniform1i(glGetUniformLocation(shader->Program, "ourTexture1"), 0);
 
-	//BACKGROUND_A
-	glBindTexture(GL_TEXTURE_2D, textureE6);
+	//BACKGROUND
+	glBindTexture(GL_TEXTURE_2D, background);
 	modelC = glm::mat4();
-	modelC = glm::translate(modelC, glm::vec3(pos_background_a, -3.5f, 0.0f));
-	modelC = glm::scale(modelC, glm::vec3(35.0f, 10.0f, 1.0f));
+	modelC = glm::translate(modelC, glm::vec3(POS_BACKGROUND, -3.5f, 0.0f));
+	modelC = glm::scale(modelC, glm::vec3(35.0f, 25.0f, 1.0f));
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelC));
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-	//BACKGROUND_B
-	glBindTexture(GL_TEXTURE_2D, texture);
-	model = glm::mat4();
-	model = glm::translate(model, glm::vec3(pos_background_b, 0.0f, 0.0f));
-	model = glm::scale(model, glm::vec3(32.0f, 27.0f, 1.0f));
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-	//TARGET
-	unsigned int es[2] = {textureE1,textureE2};
-	glBindTexture(GL_TEXTURE_2D, es[d]);
+	//ALVO
+	glBindTexture(GL_TEXTURE_2D, alvo);
 	model3 = glm::mat4();
-	model3 = glm::translate(model3, glm::vec3(pos_horizontal_target, pos_vertical_target, 0.0f));
-	model3 = glm::scale(model3, glm::vec3(2.0f, 3.0f, 1.0f));
+	model3 = glm::translate(model3, glm::vec3(POS_ALVO_HORIZONTAL, pos_alvo_vertical, 0.0f));
+	model3 = glm::scale(model3, glm::vec3(5.0f, 5.0f, 1.0f));
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model3));
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-	
-	//NUVENS
-	glBindTexture(GL_TEXTURE_2D, texture2);
-	model4 = glm::mat4();
-	model4 = glm::translate(model4, glm::vec3(nuvens, 7.0f, 0.0f));
-	model4 = glm::scale(model4, glm::vec3(5.0f, 5.0f, 1.0f));
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model4));
+
+	//FLECHAS
+	pos_flecha_1_horizontal = pos_flecha_1_horizontal + 0.005;
+	glBindTexture(GL_TEXTURE_2D, texture3);
+	model5 = glm::mat4();
+	model5 = glm::translate(model5, glm::vec3(pos_flecha_1_horizontal, -7.0f, 0.0f));
+	model5 = glm::scale(model5, glm::vec3(5.0f, 5.0f, 1.0f));
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model5));
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-	nuvens = nuvens + 0.001;
-	if (nuvens >= 18)
-		nuvens = -13;
+	if (pos_flecha_1_horizontal >= 18)
+		pos_flecha_1_horizontal = -13;
 
-	if (startgame == false) {
-		glBindTexture(GL_TEXTURE_2D, textureE7);
-		model8 = glm::mat4();
-		model8 = glm::translate(model8, glm::vec3(0.0f, 0.0f, 0.0f));
-		model8 = glm::scale(model8, glm::vec3(10.0f, 10.0f, 1.0f));
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model8));
-		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-	}
-
-	//METEOROS
-	if (startgame == true) {
-		meteoroB = meteoroB - 0.004;
-		meteoroC = meteoroC - 0.006;
-		glBindTexture(GL_TEXTURE_2D, texture1);
-		model2 = glm::mat4();
-		model2 = glm::translate(model2, glm::vec3(-3.0f, meteoroB, 0.0f));
-		model2 = glm::scale(model2, glm::vec3(5.0f, 5.0f, 1.0f));
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model2));
-		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	pos_flecha_2_horizontal = pos_flecha_2_horizontal - 0.004;
+	glBindTexture(GL_TEXTURE_2D, texture1);
+	model2 = glm::mat4();
+	model2 = glm::translate(model2, glm::vec3(pos_flecha_2_horizontal, -3.0f, 0.0f));
+	model2 = glm::scale(model2, glm::vec3(5.0f, 5.0f, 1.0f));
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model2));
+	glBindVertexArray(VAO);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	
-		glBindTexture(GL_TEXTURE_2D, texture1);
-		model2 = glm::mat4();
-		model2 = glm::translate(model2, glm::vec3(10.0f, meteoroB, 0.0f));
-		model2 = glm::scale(model2, glm::vec3(5.0f, 5.0f, 1.0f));
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model2));
-		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glBindTexture(GL_TEXTURE_2D, texture1);
+	model2 = glm::mat4();
+	model2 = glm::translate(model2, glm::vec3(pos_flecha_2_horizontal, -10.0f, 0.0f));
+	model2 = glm::scale(model2, glm::vec3(5.0f, 5.0f, 1.0f));
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model2));
+	glBindVertexArray(VAO);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-		glBindTexture(GL_TEXTURE_2D, texture1);
-		model2 = glm::mat4();
-		model2 = glm::translate(model2, glm::vec3(3.0f, meteoroC, 0.0f));
-		model2 = glm::scale(model2, glm::vec3(5.0f, 5.0f, 1.0f));
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model2));
-		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		if (meteoroC < -13)
-			meteoroC = 18;
-
-		glBindTexture(GL_TEXTURE_2D, texture1);
-		model2 = glm::mat4();
-		model2 = glm::translate(model2, glm::vec3(-10.0f, meteoroC, 0.0f));
-		model2 = glm::scale(model2, glm::vec3(5.0f, 5.0f, 1.0f));
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model2));
-		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		if (meteoroB < -13)
-			meteoroB = 18;
-
-		cont = cont + 1;
-		if (cont > 10000) {
-			meteoroA = meteoroA + 0.005;
-			glBindTexture(GL_TEXTURE_2D, texture3);
-			model5 = glm::mat4();
-			model5 = glm::translate(model5, glm::vec3(meteoroA, -7.0f, 0.0f));
-			model5 = glm::scale(model5, glm::vec3(5.0f, 5.0f, 1.0f));
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model5));
-			glBindVertexArray(VAO);
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-			if (meteoroA >= 18)
-				meteoroA = -13;
-		}
-
-		if (cont > 40000) {
-			meteoroD = meteoroD + 0.006;
-			glBindTexture(GL_TEXTURE_2D, texture3);
-			model5 = glm::mat4();
-			model5 = glm::translate(model5, glm::vec3(meteoroD, 1.0f, 0.0f));
-			model5 = glm::scale(model5, glm::vec3(5.0f, 5.0f, 1.0f));
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model5));
-			glBindVertexArray(VAO);
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-			if (meteoroD >= 18)
-				meteoroD = -13;
-		}
-
-
-
-		//COLISAO
-
-		//METEOROS
-		// METEORO_B
-		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 - 3 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 - 3 && pos_vertical_target + 0.5 >= -0.5 + meteoroB && pos_vertical_target + 0.5 <= 0.5 + meteoroB) {
-			endgame = true;
-		}
-		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 - 3 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 - 3 && pos_vertical_target - 0.5 >= -0.5 + meteoroB && pos_vertical_target - 0.5 <= 0.5 + meteoroB) {
-			endgame = true;
-		}
-		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 - 3 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 - 3 && pos_vertical_target + 0.5 >= -0.5 + meteoroB && pos_vertical_target + 0.5 <= 0.5 + meteoroB) {
-			endgame = true;
-		}
-		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 - 3 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 - 3 && pos_vertical_target - 0.5 >= -0.5 + meteoroB && pos_vertical_target - 0.5 <= 0.5 + meteoroB) {
-			endgame = true;
-		}
-		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 + 10 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 + 10 && pos_vertical_target + 0.5 >= -0.5 + meteoroB && pos_vertical_target + 0.5 <= 0.5 + meteoroB) {
-			endgame = true;
-		}
-		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 + 10 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 + 10 && pos_vertical_target - 0.5 >= -0.5 + meteoroB && pos_vertical_target - 0.5 <= 0.5 + meteoroB) {
-			endgame = true;
-		}
-		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 + 10 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 + 10 && pos_vertical_target + 0.5 >= -0.5 + meteoroB && pos_vertical_target + 0.5 <= 0.5 + meteoroB) {
-			endgame = true;
-		}
-		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 + 10 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 + 10 && pos_vertical_target - 0.5 >= -0.5 + meteoroB && pos_vertical_target - 0.5 <= 0.5 + meteoroB) {
-			endgame = true;
-		}
-		//METEORO_C
-		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 - 10 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 - 10 && pos_vertical_target + 0.5 >= -0.5 + meteoroC && pos_vertical_target + 0.5 <= 0.5 + meteoroC) {
-			endgame = true;
-		}
-		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 - 10 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 - 10 && pos_vertical_target - 0.5 >= -0.5 + meteoroC && pos_vertical_target - 0.5 <= 0.5 + meteoroC) {
-			endgame = true;
-		}
-		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 - 10 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 - 10 && pos_vertical_target + 0.5 >= -0.5 + meteoroC && pos_vertical_target + 0.5 <= 0.5 + meteoroC) {
-			endgame = true;
-		}
-		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 - 10 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 - 10 && pos_vertical_target - 0.5 >= -0.5 + meteoroC && pos_vertical_target - 0.5 <= 0.5 + meteoroC) {
-			endgame = true;
-		}
-		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 + 3 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 + 3 && pos_vertical_target + 0.5 >= -0.5 + meteoroC && pos_vertical_target + 0.5 <= 0.5 + meteoroC) {
-			endgame = true;
-		}
-		if (pos_horizontal_target + 0.5 >= -0.5 - 2.5 + 3 && pos_horizontal_target + 0.5 <= 0.5 + 2.5 + 3 && pos_vertical_target - 0.5 >= -0.5 + meteoroC && pos_vertical_target - 0.5 <= 0.5 + meteoroC) {
-			endgame = true;
-		}
-		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 + 3 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 + 3 && pos_vertical_target + 0.5 >= -0.5 + meteoroC && pos_vertical_target + 0.5 <= 0.5 + meteoroC) {
-			endgame = true;
-		}
-		if (pos_horizontal_target - 0.5 >= -0.5 - 2.5 + 3 && pos_horizontal_target - 0.5 <= 0.5 + 2.5 + 3 && pos_vertical_target - 0.5 >= -0.5 + meteoroC && pos_vertical_target - 0.5 <= 0.5 + meteoroC) {
-			endgame = true;
-		}
-		//METEORO_A
-		if (pos_horizontal_target + 0.5 >= -0.5 + meteoroA - 2.5 && pos_horizontal_target + 0.5 <= 0.5 + meteoroA + 2.5 && pos_vertical_target + 0.5 >= -0.5 - 7.0f && pos_vertical_target + 0.5 <= 0.5 - 7.0f) {
-			endgame = true;
-		}
-		if (pos_horizontal_target + 0.5 >= -0.5 + meteoroA - 2.5 && pos_horizontal_target + 0.5 <= 0.5 + meteoroA + 2.5 && pos_vertical_target - 0.5 >= -0.5 - 7.0f && pos_vertical_target - 0.5 <= 0.5 - 7.0f) {
-			endgame = true;
-		}
-		if (pos_horizontal_target - 0.5 >= -0.5 + meteoroA - 2.5 && pos_horizontal_target - 0.5 <= 0.5 + meteoroA + 2.5&& pos_vertical_target + 0.5 >= -0.5 - 7.0f && pos_vertical_target + 0.5 <= 0.5 - 7.0f) {
-			endgame = true;
-		}
-		if (pos_horizontal_target - 0.5 >= -0.5 + meteoroA - 2.5 && pos_horizontal_target - 0.5 <= 0.5 + meteoroA + 2.5 && pos_vertical_target - 0.5 >= -0.5 - 7.0f && pos_vertical_target - 0.5 <= 0.5 - 7.0f) {
-			endgame = true;
-		}
-		//METEORO_D
-		if (pos_horizontal_target + 0.5 >= -0.5 + meteoroD - 2.5 && pos_horizontal_target + 0.5 <= 0.5 + meteoroD + 2.5 && pos_vertical_target + 0.5 >= -0.5 + 1 && pos_vertical_target + 0.5 <= 0.5 + 1) {
-			endgame = true;
-		}
-		if (pos_horizontal_target + 0.5 >= -0.5 + meteoroD - 2.5 && pos_horizontal_target + 0.5 <= 0.5 + meteoroD + 2.5 && pos_vertical_target - 0.5 >= -0.5 + 1 && pos_vertical_target - 0.5 <= 0.5 + 1) {
-			endgame = true;
-		}
-		if (pos_horizontal_target - 0.5 >= -0.5 + meteoroD - 2.5 && pos_horizontal_target - 0.5 <= 0.5 + meteoroD + 2.5&& pos_vertical_target + 0.5 >= -0.5 + 1 && pos_vertical_target + 0.5 <= 0.5 + 1) {
-			endgame = true;
-		}
-		if (pos_horizontal_target - 0.5 >= -0.5 + meteoroD - 2.5 && pos_horizontal_target - 0.5 <= 0.5 + meteoroD + 2.5 && pos_vertical_target - 0.5 >= -0.5 + 1 && pos_vertical_target - 0.5 <= 0.5 + 1) {
-			endgame = true;
-		}
-
+	//COLISAO
+	// FLECHA_B
+	if (POS_ALVO_HORIZONTAL + 0.5 >= -0.5 - 2.5 - 3 
+		&& POS_ALVO_HORIZONTAL + 0.5 <= 0.5 + 2.5 - 3 
+		&& pos_alvo_vertical + 0.5 >= -0.5 + pos_flecha_2_horizontal 
+		&& pos_alvo_vertical + 0.5 <= 0.5 + pos_flecha_2_horizontal) {
+		pontuacao++;
+		cout << "Pontuacao: " << pontuacao;
+	}
+	if (POS_ALVO_HORIZONTAL + 0.5 >= -0.5 - 2.5 - 3 
+		&& POS_ALVO_HORIZONTAL + 0.5 <= 0.5 + 2.5 - 3 
+		&& pos_alvo_vertical - 0.5 >= -0.5 + pos_flecha_2_horizontal 
+		&& pos_alvo_vertical - 0.5 <= 0.5 + pos_flecha_2_horizontal) {
+		pontuacao++;
+		cout << "Pontuacao: " << pontuacao;
+	}
+	if (POS_ALVO_HORIZONTAL - 0.5 >= -0.5 - 2.5 - 3 
+		&& POS_ALVO_HORIZONTAL - 0.5 <= 0.5 + 2.5 - 3 
+		&& pos_alvo_vertical + 0.5 >= -0.5 + pos_flecha_2_horizontal 
+		&& pos_alvo_vertical + 0.5 <= 0.5 + pos_flecha_2_horizontal) {
+		pontuacao++;
+		cout << "Pontuacao: " << pontuacao;
+	}
+	if (POS_ALVO_HORIZONTAL - 0.5 >= -0.5 - 2.5 - 3 
+		&& POS_ALVO_HORIZONTAL - 0.5 <= 0.5 + 2.5 - 3 
+		&& pos_alvo_vertical - 0.5 >= -0.5 + pos_flecha_2_horizontal 
+		&& pos_alvo_vertical - 0.5 <= 0.5 + pos_flecha_2_horizontal) {
+		pontuacao++;
+		cout << "Pontuacao: " << pontuacao;
+	}
+	if (POS_ALVO_HORIZONTAL + 0.5 >= -0.5 - 2.5 + 10 
+		&& POS_ALVO_HORIZONTAL + 0.5 <= 0.5 + 2.5 + 10 
+		&& pos_alvo_vertical + 0.5 >= -0.5 + pos_flecha_2_horizontal && pos_alvo_vertical + 0.5 <= 0.5 + pos_flecha_2_horizontal) {
+		pontuacao++;
+		cout << "Pontuacao: " << pontuacao;
+	}
+	if (POS_ALVO_HORIZONTAL + 0.5 >= -0.5 - 2.5 + 10 
+		&& POS_ALVO_HORIZONTAL + 0.5 <= 0.5 + 2.5 + 10 
+		&& pos_alvo_vertical - 0.5 >= -0.5 + pos_flecha_2_horizontal 
+		&& pos_alvo_vertical - 0.5 <= 0.5 + pos_flecha_2_horizontal) {
+		pontuacao++;
+		cout << "Pontuacao: " << pontuacao;
+	}
+	if (POS_ALVO_HORIZONTAL - 0.5 >= -0.5 - 2.5 + 10 
+		&& POS_ALVO_HORIZONTAL - 0.5 <= 0.5 + 2.5 + 10 
+		&& pos_alvo_vertical + 0.5 >= -0.5 + pos_flecha_2_horizontal 
+		&& pos_alvo_vertical + 0.5 <= 0.5 + pos_flecha_2_horizontal) {
+		pontuacao++;
+		cout << "Pontuacao: " << pontuacao;
+	}
+	if (POS_ALVO_HORIZONTAL - 0.5 >= -0.5 - 2.5 + 10 
+		&& POS_ALVO_HORIZONTAL - 0.5 <= 0.5 + 2.5 + 10 
+		&& pos_alvo_vertical - 0.5 >= -0.5 + pos_flecha_2_horizontal 
+		&& pos_alvo_vertical - 0.5 <= 0.5 + pos_flecha_2_horizontal) {
+		pontuacao++;
+		cout << "Pontuacao: " << pontuacao;
 	}
 
-	//GAME OVER TELA
-	if (endgame == true) {
-		glBindTexture(GL_TEXTURE_2D, textureG);
-		model6 = glm::mat4();
-		model6 = glm::scale(model6, glm::vec3(30.0f, 20.0f, 1.0f));
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model6));
-		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	//FLECHA_A
+	if (POS_ALVO_HORIZONTAL + 0.5 >= -0.5 + pos_flecha_1_horizontal - 2.5 
+		&& POS_ALVO_HORIZONTAL + 0.5 <= 0.5 + pos_flecha_1_horizontal + 2.5 
+		&& pos_alvo_vertical + 0.5 >= -0.5 - 7.0f && pos_alvo_vertical + 0.5 <= 0.5 - 7.0f) {
+		pontuacao++;
+		cout << "Pontuacao: " << pontuacao;
+	}
+	if (POS_ALVO_HORIZONTAL + 0.5 >= -0.5 + pos_flecha_1_horizontal - 2.5 
+		&& POS_ALVO_HORIZONTAL + 0.5 <= 0.5 + pos_flecha_1_horizontal + 2.5 
+		&& pos_alvo_vertical - 0.5 >= -0.5 - 7.0f && pos_alvo_vertical - 0.5 <= 0.5 - 7.0f) {
+		pontuacao++;
+		cout << "Pontuacao: " << pontuacao;
+	}
+	if (POS_ALVO_HORIZONTAL - 0.5 >= -0.5 + pos_flecha_1_horizontal - 2.5 
+		&& POS_ALVO_HORIZONTAL - 0.5 <= 0.5 + pos_flecha_1_horizontal + 2.5 
+		&& pos_alvo_vertical + 0.5 >= -0.5 - 7.0f && pos_alvo_vertical + 0.5 <= 0.5 - 7.0f) {
+		pontuacao++;
+		cout << "Pontuacao: " << pontuacao;
+	}
+	if (POS_ALVO_HORIZONTAL - 0.5 >= -0.5 + pos_flecha_1_horizontal - 2.5 
+		&& POS_ALVO_HORIZONTAL - 0.5 <= 0.5 + pos_flecha_1_horizontal + 2.5 
+		&& pos_alvo_vertical - 0.5 >= -0.5 - 7.0f && pos_alvo_vertical - 0.5 <= 0.5 - 7.0f) {
+		pontuacao++;
+		cout << "Pontuacao: " << pontuacao;
 	}
 }
 
@@ -488,18 +366,17 @@ void SceneManager::setupCamera2D()
 
 void SceneManager::setupTexture()
 {
-
-	//------------------ // BACKGROUND_A // ---------------------------------------------------------//
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture); 
+	//------------------ // BACKGROUND // ---------------------------------------------------------//
+	glGenTextures(1, &background);
+	glBindTexture(GL_TEXTURE_2D, background); 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	int width, height, nrChannels;
-	unsigned char *data = stbi_load("../textures/cenario.png", &width, &height, &nrChannels, 0);
+	unsigned char *data = stbi_load("../textures/ceu_2.png", &width, &height, &nrChannels, 0);
 	if (data){
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else{
@@ -511,35 +388,14 @@ void SceneManager::setupTexture()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	//------------------ // BACKGROUND_B // ---------------------------------------------------------//
-	glGenTextures(1, &textureE6);
-	glBindTexture(GL_TEXTURE_2D, textureE6);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	unsigned char* data20 = stbi_load("../textures/cenario2.png", &width, &height, &nrChannels, 0);
-	if (data20) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data20);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else {
-		std::cout << "Failed to load texture" << std::endl;
-	}
-	stbi_image_free(data20);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glActiveTexture(GL_TEXTURE0);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	//------------------ // METEORO // ---------------------------------------------------------//
+	//------------------ // FLECHA // ---------------------------------------------------------//
 	glGenTextures(1, &texture1);
 	glBindTexture(GL_TEXTURE_2D, texture1);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	unsigned char *data1 = stbi_load("../textures/meteoro.png", &width, &height, &nrChannels, 0);
+	unsigned char *data1 = stbi_load("../textures/flecha.png", &width, &height, &nrChannels, 0);
 	if (data1){
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data1);
 		glGenerateMipmap(GL_TEXTURE_2D);
@@ -553,36 +409,14 @@ void SceneManager::setupTexture()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-
-	//------------------ // NUVENS // ---------------------------------------------------------//
-	glGenTextures(1, &texture2);
-	glBindTexture(GL_TEXTURE_2D, texture2);
+	//------------------ // ALVO // ---------------------------------------------------------//
+	glGenTextures(1, &alvo);
+	glBindTexture(GL_TEXTURE_2D, alvo);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	unsigned char *data2 = stbi_load("../textures/nuvens.png", &width, &height, &nrChannels, 0);
-	if (data2){
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data2);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else{
-		std::cout << "Failed to load texture" << std::endl;
-	}
-	stbi_image_free(data2);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glActiveTexture(GL_TEXTURE0);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	//------------------ // TARGET // ---------------------------------------------------------//
-	glGenTextures(1, &textureE1);
-	glBindTexture(GL_TEXTURE_2D, textureE1);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	unsigned char *data3 = stbi_load("../textures/esquilo1.png", &width, &height, &nrChannels, 0);
+	unsigned char *data3 = stbi_load("../textures/alvo.png", &width, &height, &nrChannels, 0);
 	if (data3) {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data3);
 		glGenerateMipmap(GL_TEXTURE_2D);
@@ -591,68 +425,6 @@ void SceneManager::setupTexture()
 		std::cout << "Failed to load texture" << std::endl;
 	}
 	stbi_image_free(data3);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glActiveTexture(GL_TEXTURE0);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	// Esquerda
-	glGenTextures(1, &textureE2);
-	glBindTexture(GL_TEXTURE_2D, textureE2);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	unsigned char *data33 = stbi_load("../textures/esquiloE.png", &width, &height, &nrChannels, 0);
-	if (data33) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data33);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else {
-		std::cout << "Failed to load texture" << std::endl;
-	}
-	stbi_image_free(data33);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glActiveTexture(GL_TEXTURE0);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	//------------------ // START GAME // ---------------------------------------------------------//
-	glGenTextures(1, &textureE7);
-	glBindTexture(GL_TEXTURE_2D, textureE7);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	unsigned char *data9 = stbi_load("../textures/start.png", &width, &height, &nrChannels, 0);
-	if (data9) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data9);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else {
-		std::cout << "Failed to load texture" << std::endl;
-	}
-	stbi_image_free(data9);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glActiveTexture(GL_TEXTURE0);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	//------------------ // GAME OVER // ---------------------------------------------------------//
-	glGenTextures(1, &textureG);
-	glBindTexture(GL_TEXTURE_2D, textureG);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	unsigned char *data11 = stbi_load("../textures/go.png", &width, &height, &nrChannels, 0);
-	if (data11) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data11);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else {
-		std::cout << "Failed to load texture" << std::endl;
-	}
-	stbi_image_free(data11);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glActiveTexture(GL_TEXTURE0);
 	glEnable(GL_BLEND);
