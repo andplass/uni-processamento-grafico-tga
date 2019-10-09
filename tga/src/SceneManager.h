@@ -51,7 +51,7 @@ private:
 	//2D Camera - Projection matrix
 	glm::mat4 projection;
 	//Texture index
-	unsigned int textura_flecha, textura_alvo, textura_cenario, textura_atirador, textura_nuvens;
-
+	unsigned int textura_flecha[5], textura_alvo[11], textura_cenario, textura_atirador[6], textura_nuvens;
+	int spriteRefreshTick = 0, spriteAtualAlvo = 0, spriteAtualAtirador = 0, spriteAtualFlecha = 0;
 };
 
