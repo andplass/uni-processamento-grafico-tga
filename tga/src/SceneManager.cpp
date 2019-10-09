@@ -221,6 +221,7 @@ void SceneManager::render()
 		is_flecha_disparda = false;
 		pos_flecha_horizontal = OUT_OF_BOUNDS;
 	}
+
 	if (is_flecha_disparda) {
 		pos_flecha_horizontal -= VELOCIDADE_MOV_FLECHA;
 		glBindTexture(GL_TEXTURE_2D, textura_flecha[spriteAtualFlecha]);
@@ -393,475 +394,78 @@ void SceneManager::setupTexture()
 
 	//------------------ // FLECHA // ---------------------------------------------------------//
 
-	{ {
-			glGenTextures(1, &textura_flecha[0]);
-			glBindTexture(GL_TEXTURE_2D, textura_flecha[0]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			unsigned char *textura_flecha_file = stbi_load("../textures/flecha1.png", &width, &height, &nrChannels, 0);
-			if (textura_flecha_file) {
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_flecha_file);
-				glGenerateMipmap(GL_TEXTURE_2D);
-			}
-			else {
-				std::cout << "Failed to load texture" << std::endl;
-			}
-			stbi_image_free(textura_flecha_file);
-			glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
-			glActiveTexture(GL_TEXTURE0);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			//proximo sprite da flecha
-			glGenTextures(1, &textura_flecha[1]);
-			glBindTexture(GL_TEXTURE_2D, textura_flecha[1]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			unsigned char *textura_flecha_file = stbi_load("../textures/flecha2.png", &width, &height, &nrChannels, 0);
-			if (textura_flecha_file) {
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_flecha_file);
-				glGenerateMipmap(GL_TEXTURE_2D);
-			}
-			else {
-				std::cout << "Failed to load texture" << std::endl;
-			}
-			stbi_image_free(textura_flecha_file);
-			glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
-			glActiveTexture(GL_TEXTURE0);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			//proximo sprite da flecha
-			glGenTextures(1, &textura_flecha[2]);
-			glBindTexture(GL_TEXTURE_2D, textura_flecha[2]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			unsigned char *textura_flecha_file = stbi_load("../textures/flecha3.png", &width, &height, &nrChannels, 0);
-			if (textura_flecha_file) {
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_flecha_file);
-				glGenerateMipmap(GL_TEXTURE_2D);
-			}
-			else {
-				std::cout << "Failed to load texture" << std::endl;
-			}
-			stbi_image_free(textura_flecha_file);
-			glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
-			glActiveTexture(GL_TEXTURE0);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			//proximo sprite da flecha
-			glGenTextures(1, &textura_flecha[3]);
-			glBindTexture(GL_TEXTURE_2D, textura_flecha[3]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			unsigned char *textura_flecha_file = stbi_load("../textures/flecha4.png", &width, &height, &nrChannels, 0);
-			if (textura_flecha_file) {
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_flecha_file);
-				glGenerateMipmap(GL_TEXTURE_2D);
-			}
-			else {
-				std::cout << "Failed to load texture" << std::endl;
-			}
-			stbi_image_free(textura_flecha_file);
-			glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
-			glActiveTexture(GL_TEXTURE0);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			//proximo sprite da flecha
-			glGenTextures(1, &textura_flecha[4]);
-			glBindTexture(GL_TEXTURE_2D, textura_flecha[4]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			unsigned char *textura_flecha_file = stbi_load("../textures/flecha5.png", &width, &height, &nrChannels, 0);
-			if (textura_flecha_file) {
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_flecha_file);
-				glGenerateMipmap(GL_TEXTURE_2D);
-			}
-			else {
-				std::cout << "Failed to load texture" << std::endl;
-			}
-			stbi_image_free(textura_flecha_file);
-			glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
-			glActiveTexture(GL_TEXTURE0);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+	for (int x = 0; x <= 4; x++)
+	{
+		glGenTextures(1, &textura_flecha[x]);
+		glBindTexture(GL_TEXTURE_2D, textura_flecha[x]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		unsigned char *textura_flecha_file = stbi_load(("../textures/flecha" + x + ".png"), &width, &height, &nrChannels, 0);
+		if (textura_flecha_file) {
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_flecha_file);
+			glGenerateMipmap(GL_TEXTURE_2D);
 		}
-
+		else {
+			std::cout << "Failed to load texture" << std::endl;
+		}
+		stbi_image_free(textura_flecha_file);
+		glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
+		glActiveTexture(GL_TEXTURE0);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+		
 	//------------------ // ALVO // ---------------------------------------------------------//
 
-	{ {
-			glGenTextures(1, &textura_alvo[0]);
-			glBindTexture(GL_TEXTURE_2D, textura_alvo[0]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			unsigned char *textura_alvo_file = stbi_load("../textures/alvo1.png", &width, &height, &nrChannels, 0);
-			if (textura_alvo_file) {
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_alvo_file);
-				glGenerateMipmap(GL_TEXTURE_2D);
-			}
-			else {
-				std::cout << "Failed to load texture" << std::endl;
-			}
-			stbi_image_free(textura_alvo_file);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glActiveTexture(GL_TEXTURE0);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			//proximo sprite do alvo
-			glGenTextures(1, &textura_alvo[1]);
-			glBindTexture(GL_TEXTURE_2D, textura_alvo[1]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			unsigned char *textura_alvo_file = stbi_load("../textures/alvo2.png", &width, &height, &nrChannels, 0);
-			if (textura_alvo_file) {
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_alvo_file);
-				glGenerateMipmap(GL_TEXTURE_2D);
-			}
-			else {
-				std::cout << "Failed to load texture" << std::endl;
-			}
-			stbi_image_free(textura_alvo_file);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glActiveTexture(GL_TEXTURE0);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			//proximo sprite do alvo
-			glGenTextures(1, &textura_alvo[2]);
-			glBindTexture(GL_TEXTURE_2D, textura_alvo[2]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			unsigned char *textura_alvo_file = stbi_load("../textures/alvo3.png", &width, &height, &nrChannels, 0);
-			if (textura_alvo_file) {
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_alvo_file);
-				glGenerateMipmap(GL_TEXTURE_2D);
-			}
-			else {
-				std::cout << "Failed to load texture" << std::endl;
-			}
-			stbi_image_free(textura_alvo_file);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glActiveTexture(GL_TEXTURE0);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			//proximo sprite do alvo
-			glGenTextures(1, &textura_alvo[3]);
-			glBindTexture(GL_TEXTURE_2D, textura_alvo[3]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			unsigned char *textura_alvo_file = stbi_load("../textures/alvo4.png", &width, &height, &nrChannels, 0);
-			if (textura_alvo_file) {
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_alvo_file);
-				glGenerateMipmap(GL_TEXTURE_2D);
-			}
-			else {
-				std::cout << "Failed to load texture" << std::endl;
-			}
-			stbi_image_free(textura_alvo_file);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glActiveTexture(GL_TEXTURE0);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			//proximo sprite do alvo
-			glGenTextures(1, &textura_alvo[4]);
-			glBindTexture(GL_TEXTURE_2D, textura_alvo[4]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			unsigned char *textura_alvo_file = stbi_load("../textures/alvo5.png", &width, &height, &nrChannels, 0);
-			if (textura_alvo_file) {
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_alvo_file);
-				glGenerateMipmap(GL_TEXTURE_2D);
-			}
-			else {
-				std::cout << "Failed to load texture" << std::endl;
-			}
-			stbi_image_free(textura_alvo_file);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glActiveTexture(GL_TEXTURE0);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			//proximo sprite do alvo
-			glGenTextures(1, &textura_alvo[5]);
-			glBindTexture(GL_TEXTURE_2D, textura_alvo[5]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			unsigned char *textura_alvo_file = stbi_load("../textures/alvo6.png", &width, &height, &nrChannels, 0);
-			if (textura_alvo_file) {
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_alvo_file);
-				glGenerateMipmap(GL_TEXTURE_2D);
-			}
-			else {
-				std::cout << "Failed to load texture" << std::endl;
-			}
-			stbi_image_free(textura_alvo_file);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glActiveTexture(GL_TEXTURE0);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			//proximo sprite do alvo
-			glGenTextures(1, &textura_alvo[6]);
-			glBindTexture(GL_TEXTURE_2D, textura_alvo[6]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			unsigned char *textura_alvo_file = stbi_load("../textures/alvo7.png", &width, &height, &nrChannels, 0);
-			if (textura_alvo_file) {
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_alvo_file);
-				glGenerateMipmap(GL_TEXTURE_2D);
-			}
-			else {
-				std::cout << "Failed to load texture" << std::endl;
-			}
-			stbi_image_free(textura_alvo_file);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glActiveTexture(GL_TEXTURE0);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-
-			//proximo sprite do alvo
-			glGenTextures(1, &textura_alvo[7]);
-			glBindTexture(GL_TEXTURE_2D, textura_alvo[7]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			unsigned char *textura_alvo_file = stbi_load("../textures/alvo8.png", &width, &height, &nrChannels, 0);
-			if (textura_alvo_file) {
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_alvo_file);
-				glGenerateMipmap(GL_TEXTURE_2D);
-			}
-			else {
-				std::cout << "Failed to load texture" << std::endl;
-			}
-			stbi_image_free(textura_alvo_file);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glActiveTexture(GL_TEXTURE0);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			//proximo sprite do alvo
-			glGenTextures(1, &textura_alvo[8]);
-			glBindTexture(GL_TEXTURE_2D, textura_alvo[8]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			unsigned char *textura_alvo_file = stbi_load("../textures/alvo9.png", &width, &height, &nrChannels, 0);
-			if (textura_alvo_file) {
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_alvo_file);
-				glGenerateMipmap(GL_TEXTURE_2D);
-			}
-			else {
-				std::cout << "Failed to load texture" << std::endl;
-			}
-			stbi_image_free(textura_alvo_file);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glActiveTexture(GL_TEXTURE0);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			//proximo sprite do alvo
-			glGenTextures(1, &textura_alvo[9]);
-			glBindTexture(GL_TEXTURE_2D, textura_alvo[9]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			unsigned char *textura_alvo_file = stbi_load("../textures/alvo10.png", &width, &height, &nrChannels, 0);
-			if (textura_alvo_file) {
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_alvo_file);
-				glGenerateMipmap(GL_TEXTURE_2D);
-			}
-			else {
-				std::cout << "Failed to load texture" << std::endl;
-			}
-			stbi_image_free(textura_alvo_file);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glActiveTexture(GL_TEXTURE0);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			//proximo sprite do alvo
-			glGenTextures(1, &textura_alvo[10]);
-			glBindTexture(GL_TEXTURE_2D, textura_alvo[10]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			unsigned char *textura_alvo_file = stbi_load("../textures/alvo11.png", &width, &height, &nrChannels, 0);
-			if (textura_alvo_file) {
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_alvo_file);
-				glGenerateMipmap(GL_TEXTURE_2D);
-			}
-			else {
-				std::cout << "Failed to load texture" << std::endl;
-			}
-			stbi_image_free(textura_alvo_file);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glActiveTexture(GL_TEXTURE0);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	for (int x = 0; x <= 10; x++)
+	{
+		glGenTextures(1, &textura_alvo[x]);
+		glBindTexture(GL_TEXTURE_2D, textura_alvo[x]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		unsigned char *textura_alvo_file = stbi_load("../textures/alvo" + x + ".png", &width, &height, &nrChannels, 0);
+		if (textura_alvo_file) {
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_alvo_file);
+			glGenerateMipmap(GL_TEXTURE_2D);
 		}
+		else {
+			std::cout << "Failed to load texture" << std::endl;
+		}
+		stbi_image_free(textura_alvo_file);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glActiveTexture(GL_TEXTURE0);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+			
 
 	//------------------ // ANJO // ---------------------------------------------------------//
 
-	{ {
-			glGenTextures(1, &textura_atirador[0]);
-			glBindTexture(GL_TEXTURE_2D, textura_atirador[0]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			unsigned char* textura_atirador_file = stbi_load("../textures/anjo1.png", &width, &height, &nrChannels, 0);
-			if (textura_atirador_file) {
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_atirador_file);
-				glGenerateMipmap(GL_TEXTURE_2D);
-			}
-			else {
-				std::cout << "Failed to load texture" << std::endl;
-			}
-			stbi_image_free(textura_atirador_file);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glActiveTexture(GL_TEXTURE0);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			//proximo sprite do anjo
-			glGenTextures(1, &textura_atirador[1]);
-			glBindTexture(GL_TEXTURE_2D, textura_atirador[1]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			unsigned char* textura_atirador_file = stbi_load("../textures/anjo2.png", &width, &height, &nrChannels, 0);
-			if (textura_atirador_file) {
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_atirador_file);
-				glGenerateMipmap(GL_TEXTURE_2D);
-			}
-			else {
-				std::cout << "Failed to load texture" << std::endl;
-			}
-			stbi_image_free(textura_atirador_file);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glActiveTexture(GL_TEXTURE0);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			//proximo sprite do anjo
-			glGenTextures(1, &textura_atirador[2]);
-			glBindTexture(GL_TEXTURE_2D, textura_atirador[2]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			unsigned char* textura_atirador_file = stbi_load("../textures/anjo3.png", &width, &height, &nrChannels, 0);
-			if (textura_atirador_file) {
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_atirador_file);
-				glGenerateMipmap(GL_TEXTURE_2D);
-			}
-			else {
-				std::cout << "Failed to load texture" << std::endl;
-			}
-			stbi_image_free(textura_atirador_file);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glActiveTexture(GL_TEXTURE0);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			//proximo sprite do anjo
-			glGenTextures(1, &textura_atirador[3]);
-			glBindTexture(GL_TEXTURE_2D, textura_atirador[3]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			unsigned char* textura_atirador_file = stbi_load("../textures/anjo4.png", &width, &height, &nrChannels, 0);
-			if (textura_atirador_file) {
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_atirador_file);
-				glGenerateMipmap(GL_TEXTURE_2D);
-			}
-			else {
-				std::cout << "Failed to load texture" << std::endl;
-			}
-			stbi_image_free(textura_atirador_file);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glActiveTexture(GL_TEXTURE0);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			//proximo sprite do anjo
-			glGenTextures(1, &textura_atirador[4]);
-			glBindTexture(GL_TEXTURE_2D, textura_atirador[4]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			unsigned char* textura_atirador_file = stbi_load("../textures/anjo5.png", &width, &height, &nrChannels, 0);
-			if (textura_atirador_file) {
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_atirador_file);
-				glGenerateMipmap(GL_TEXTURE_2D);
-			}
-			else {
-				std::cout << "Failed to load texture" << std::endl;
-			}
-			stbi_image_free(textura_atirador_file);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glActiveTexture(GL_TEXTURE0);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			//proximo sprite do anjo
-			glGenTextures(1, &textura_atirador[5]);
-			glBindTexture(GL_TEXTURE_2D, textura_atirador[5]);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			unsigned char* textura_atirador_file = stbi_load("../textures/anjo6.png", &width, &height, &nrChannels, 0);
-			if (textura_atirador_file) {
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_atirador_file);
-				glGenerateMipmap(GL_TEXTURE_2D);
-			}
-			else {
-				std::cout << "Failed to load texture" << std::endl;
-			}
-			stbi_image_free(textura_atirador_file);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glActiveTexture(GL_TEXTURE0);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	for (int x = 0; x <= 5; x++)
+	{
+		glGenTextures(1, &textura_atirador[x]);
+		glBindTexture(GL_TEXTURE_2D, textura_atirador[x]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		unsigned char* textura_atirador_file = stbi_load("../textures/anjo" + x + ".png", &width, &height, &nrChannels, 0);
+		if (textura_atirador_file) {
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_atirador_file);
+			glGenerateMipmap(GL_TEXTURE_2D);
 		}
+		else {
+			std::cout << "Failed to load texture" << std::endl;
+		}
+		stbi_image_free(textura_atirador_file);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glActiveTexture(GL_TEXTURE0);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
 
-	}}}
+	}
