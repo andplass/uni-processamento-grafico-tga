@@ -1,4 +1,6 @@
 #include "SceneManager.h"
+#include <string>
+using namespace std;
 
 //static controllers for mouse and keyboard
 static bool keys[1024];
@@ -11,24 +13,24 @@ int pontuacao = 0;
 const float MAX_SCENE_HEIGHT = 10;
 const float MIN_SCENE_HEIGHT = -10;
 //atributos do alvo
-const float POS_ALVO_HORIZONTAL = -11;
+const float POS_ALVO_HORIZONTAL = -12.4;
 const float VELOCIDADE_MOV_ALVO = 0.0075;
 const glm::vec3 escala_alvo = glm::vec3(2.0f, 2.0f, 0.0f);
 float pos_alvo_vertical = 0;
 //atributos do atirador
-const float POS_ATIRADOR_HORIZONTAL = 11;
+const float POS_ATIRADOR_HORIZONTAL = 10.5;
 const float VELOCIDADE_MOV_ATIRADOR = 0.0085;
 const glm::vec3 escala_atirador = glm::vec3(5.0f, 5.0f, 0.0f);
 float pos_atirador_vertical = 0;
 //atributos das flecha
-const float VELOCIDADE_MOV_FLECHA = 0.045;
-const float POS_FLECHA_HORIZONTAL_INICIAL = POS_ATIRADOR_HORIZONTAL;
+const float VELOCIDADE_MOV_FLECHA = 0.064;
+const float POS_FLECHA_HORIZONTAL_INICIAL = POS_ATIRADOR_HORIZONTAL - 0.9;
 const glm::vec3 escala_flecha = glm::vec3(2.9f, 0.6f, 0.0f);
 float pos_flecha_horizontal = 0;
 float pos_flecha_vertical = 0;
 bool is_flecha_disparda = false;
 //atributos do cenario
-const glm::vec3 escala_cenario = glm::vec3(30.0f, 30.0f, 0.0f);
+const glm::vec3 ESCALA_CENARIO = glm::vec3(30.0f, 30.0f, 0.0f);
 float pos_cenario_vertical = 0;
 //outros atributos
 const float ZERO = 0;
@@ -133,7 +135,7 @@ void SceneManager::processInput()
 		}
 	}
 	if (keys[GLFW_KEY_O]) {
-		if (pos_atirador_vertical < MAX_SCENE_HEIGHT - 1) {
+		if (pos_atirador_vertical < MAX_SCENE_HEIGHT - 2.5) {
 			pos_atirador_vertical += VELOCIDADE_MOV_ATIRADOR;
 		}
 	}
@@ -145,7 +147,7 @@ void SceneManager::processInput()
 	if (keys[GLFW_KEY_SPACE]) {
 		if (!is_flecha_disparda) {
 			is_flecha_disparda = true;
-			pos_flecha_vertical = pos_atirador_vertical;
+			pos_flecha_vertical = pos_atirador_vertical + 0.85;
 			pos_flecha_horizontal = POS_FLECHA_HORIZONTAL_INICIAL;
 			//posicionar a flecha na frente do atirador (y = altura do atirador atual se mantem) (x inicial = fixo)
 		}
@@ -159,7 +161,7 @@ void SceneManager::calculateCollisions()
 		&& pos_flecha_vertical >= pos_alvo_vertical - 1
 		&& pos_flecha_horizontal <= POS_ALVO_HORIZONTAL + 2) {
 		pontuacao++;
-		cout << "Pontuacao: " << pontuacao;
+		cout << "Pontuacao: " << pontuacao << endl;
 		is_flecha_disparda = false;
 	}
 }
@@ -193,7 +195,7 @@ void SceneManager::render()
 	glBindTexture(GL_TEXTURE_2D, textura_cenario);
 	model_background = glm::mat4();
 	model_background = glm::translate(model_background, glm::vec3(ZERO, pos_cenario_vertical, ZERO));
-	model_background = glm::scale(model_background, escala_cenario);
+	model_background = glm::scale(model_background, ESCALA_CENARIO);
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model_background));
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -370,7 +372,8 @@ void SceneManager::setupCamera2D()
 
 void SceneManager::setupTexture()
 {
-	int width, height, nrChannels;
+	string texture_path;
+	int width, height, nrChannels, texture_amount;
 	//------------------ // CENARIO // ---------------------------------------------------------//
 	glGenTextures(1, &textura_cenario);
 	glBindTexture(GL_TEXTURE_2D, textura_cenario);
@@ -393,8 +396,8 @@ void SceneManager::setupTexture()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//------------------ // FLECHA // ---------------------------------------------------------//
-
-	for (int x = 0; x <= 4; x++)
+	texture_amount = 5;
+	for (int x = 0; x < texture_amount; x++)
 	{
 		glGenTextures(1, &textura_flecha[x]);
 		glBindTexture(GL_TEXTURE_2D, textura_flecha[x]);
@@ -402,7 +405,8 @@ void SceneManager::setupTexture()
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		unsigned char *textura_flecha_file = stbi_load(("../textures/flecha" + x + ".png"), &width, &height, &nrChannels, 0);
+		texture_path = "../textures/flecha" + std::to_string(x) + ".png";
+		unsigned char *textura_flecha_file = stbi_load(&texture_path[0], &width, &height, &nrChannels, 0);
 		if (textura_flecha_file) {
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_flecha_file);
 			glGenerateMipmap(GL_TEXTURE_2D);
@@ -417,9 +421,9 @@ void SceneManager::setupTexture()
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 		
-	//------------------ // ALVO // ---------------------------------------------------------//
-
-	for (int x = 0; x <= 10; x++)
+	//------------------ // ALVO // 
+	texture_amount = 11;
+	for (int x = 0; x < texture_amount; x++)
 	{
 		glGenTextures(1, &textura_alvo[x]);
 		glBindTexture(GL_TEXTURE_2D, textura_alvo[x]);
@@ -427,7 +431,8 @@ void SceneManager::setupTexture()
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		unsigned char *textura_alvo_file = stbi_load("../textures/alvo" + x + ".png", &width, &height, &nrChannels, 0);
+		texture_path = "../textures/alvo" + std::to_string(x) + ".png";
+		unsigned char *textura_alvo_file = stbi_load(&texture_path[0], &width, &height, &nrChannels, 0);
 		if (textura_alvo_file) {
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_alvo_file);
 			glGenerateMipmap(GL_TEXTURE_2D);
@@ -444,8 +449,8 @@ void SceneManager::setupTexture()
 			
 
 	//------------------ // ANJO // ---------------------------------------------------------//
-
-	for (int x = 0; x <= 5; x++)
+	texture_amount = 6;
+	for (int x = 0; x < texture_amount; x++)
 	{
 		glGenTextures(1, &textura_atirador[x]);
 		glBindTexture(GL_TEXTURE_2D, textura_atirador[x]);
@@ -453,7 +458,8 @@ void SceneManager::setupTexture()
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		unsigned char* textura_atirador_file = stbi_load("../textures/anjo" + x + ".png", &width, &height, &nrChannels, 0);
+		texture_path = "../textures/anjo" + std::to_string(x) + ".png";
+		unsigned char* textura_atirador_file = stbi_load(&texture_path[0], &width, &height, &nrChannels, 0);
 		if (textura_atirador_file) {
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, textura_atirador_file);
 			glGenerateMipmap(GL_TEXTURE_2D);

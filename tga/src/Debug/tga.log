@@ -1,6 +1,9 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(452,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (HelloTriangle.vcxproj).  This can lead to incorrect clean and rebuild behavior.
   SceneManager.cpp
-C:\Users\andpl\Desktop\repos-local\uni-processamento-grafico-tga\tga\src\SceneManager.cpp(15,41): warning C4305:  'initializing': truncation from 'double' to 'float'
-C:\Users\andpl\Desktop\repos-local\uni-processamento-grafico-tga\tga\src\SceneManager.cpp(20,45): warning C4305:  'initializing': truncation from 'double' to 'float'
-C:\Users\andpl\Desktop\repos-local\uni-processamento-grafico-tga\tga\src\SceneManager.cpp(24,42): warning C4305:  'initializing': truncation from 'double' to 'float'
+C:\Users\andpl\Desktop\repos-local\uni-processamento-grafico-tga\tga\src\SceneManager.cpp(16,40): warning C4305:  'initializing': truncation from 'double' to 'float'
+C:\Users\andpl\Desktop\repos-local\uni-processamento-grafico-tga\tga\src\SceneManager.cpp(17,41): warning C4305:  'initializing': truncation from 'double' to 'float'
+C:\Users\andpl\Desktop\repos-local\uni-processamento-grafico-tga\tga\src\SceneManager.cpp(22,45): warning C4305:  'initializing': truncation from 'double' to 'float'
+C:\Users\andpl\Desktop\repos-local\uni-processamento-grafico-tga\tga\src\SceneManager.cpp(26,42): warning C4305:  'initializing': truncation from 'double' to 'float'
+C:\Users\andpl\Desktop\repos-local\uni-processamento-grafico-tga\tga\src\SceneManager.cpp(27,74): warning C4305:  'initializing': truncation from 'double' to 'float'
+C:\Users\andpl\Desktop\repos-local\uni-processamento-grafico-tga\tga\src\SceneManager.cpp(150,48): warning C4244:  '=': conversion from 'double' to 'float', possible loss of data
   tga.vcxproj -> C:\Users\andpl\Desktop\repos-local\uni-processamento-grafico-tga\tga\Debug\Transforms.exe
